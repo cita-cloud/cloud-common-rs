@@ -64,9 +64,12 @@ pub mod status_code {
 pub mod client;
 pub mod retry;
 
-impl crate::status_code::StatusCode {
-    pub fn is_success(&self) -> Result<(), crate::status_code::StatusCode> {
-        if self != &crate::status_code::StatusCode::Success {
+use crate::common::StatusCode;
+use crate::status_code::StatusCode as StatusCodeEnum;
+
+impl StatusCodeEnum {
+    pub fn is_success(&self) -> Result<(), StatusCodeEnum> {
+        if self != &StatusCodeEnum::Success {
             Err(*self)
         } else {
             Ok(())
@@ -74,26 +77,33 @@ impl crate::status_code::StatusCode {
     }
 }
 
-impl ::std::fmt::Display for crate::status_code::StatusCode {
+impl ::std::fmt::Display for StatusCodeEnum {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         write!(f, "{:?}", self)
     }
 }
 
-impl ::std::error::Error for crate::status_code::StatusCode {}
+impl ::std::error::Error for StatusCodeEnum {}
 
-impl From<crate::common::StatusCode> for crate::status_code::StatusCode {
-    fn from(status: crate::common::StatusCode) -> Self {
-        crate::status_code::StatusCode::from_i32(status.code as i32)
-            .ok_or(crate::status_code::StatusCode::NoneStatusCode)
+impl From<StatusCode> for StatusCodeEnum {
+    fn from(status: StatusCode) -> Self {
+        StatusCodeEnum::from_i32(status.code as i32)
+            .ok_or(StatusCodeEnum::NoneStatusCode)
             .unwrap()
     }
 }
 
-impl From<u32> for crate::status_code::StatusCode {
+#[allow(clippy::from_over_into)]
+impl Into<StatusCode> for StatusCodeEnum {
+    fn into(self) -> StatusCode {
+        StatusCode { code: self as u32 }
+    }
+}
+
+impl From<u32> for StatusCodeEnum {
     fn from(status: u32) -> Self {
-        crate::status_code::StatusCode::from_i32(status as i32)
-            .ok_or(crate::status_code::StatusCode::NoneStatusCode)
+        StatusCodeEnum::from_i32(status as i32)
+            .ok_or(StatusCodeEnum::NoneStatusCode)
             .unwrap()
     }
 }
