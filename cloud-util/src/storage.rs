@@ -14,9 +14,9 @@
 
 use cita_cloud_proto::client::{InterceptedSvc, StorageClientTrait};
 use cita_cloud_proto::retry::RetryClient;
+use cita_cloud_proto::status_code::StatusCode;
 use cita_cloud_proto::storage::storage_service_client::StorageServiceClient;
 use cita_cloud_proto::storage::{Content, ExtKey};
-use status_code::StatusCode;
 
 pub async fn store_data(
     client: RetryClient<StorageServiceClient<InterceptedSvc>>,

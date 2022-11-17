@@ -16,8 +16,8 @@ use cita_cloud_proto::client::{InterceptedSvc, NetworkClientTrait};
 use cita_cloud_proto::network::network_service_client::NetworkServiceClient;
 use cita_cloud_proto::network::RegisterInfo;
 use cita_cloud_proto::retry::RetryClient;
+use cita_cloud_proto::status_code::StatusCode;
 use log::warn;
-use status_code::StatusCode;
 
 pub async fn register_network_msg_handler(
     client: RetryClient<NetworkServiceClient<InterceptedSvc>>,

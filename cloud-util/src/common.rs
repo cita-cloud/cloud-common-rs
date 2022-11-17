@@ -17,7 +17,7 @@ use cita_cloud_proto::blockchain::{
     Block, CompactBlock, CompactBlockBody, RawTransaction, RawTransactions,
 };
 use cita_cloud_proto::common::Address;
-use status_code::StatusCode;
+use cita_cloud_proto::status_code::StatusCode;
 use std::fs;
 use std::path::Path;
 use toml::macros::Deserialize;

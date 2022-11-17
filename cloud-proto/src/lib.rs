@@ -64,9 +64,52 @@ pub mod status_code {
 pub mod client;
 pub mod retry;
 
-#[test]
-fn test() {
-    println!("{:?}", status_code::StatusCode::LoadError);
-    println!("{}", status_code::StatusCode::LoadError as u32);
-    println!("{:?}", status_code::StatusCode::from_i32(606));
+impl crate::status_code::StatusCode {
+    pub fn is_success(&self) -> Result<(), crate::status_code::StatusCode> {
+        if self != &crate::status_code::StatusCode::Success {
+            Err(*self)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+impl ::std::fmt::Display for crate::status_code::StatusCode {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl ::std::error::Error for crate::status_code::StatusCode {}
+
+impl From<crate::common::StatusCode> for crate::status_code::StatusCode {
+    fn from(status: crate::common::StatusCode) -> Self {
+        crate::status_code::StatusCode::from_i32(status.code as i32)
+            .ok_or(crate::status_code::StatusCode::NoneStatusCode)
+            .unwrap()
+    }
+}
+
+impl From<u32> for crate::status_code::StatusCode {
+    fn from(status: u32) -> Self {
+        crate::status_code::StatusCode::from_i32(status as i32)
+            .ok_or(crate::status_code::StatusCode::NoneStatusCode)
+            .unwrap()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::status_code::StatusCode;
+
+    #[test]
+    fn it_works() {
+        println!("{:?}", StatusCode::LoadError);
+        assert_eq!(606, StatusCode::LoadError as u32);
+        assert_eq!(StatusCode::LoadError, StatusCode::from(606));
+
+        let status = crate::common::StatusCode { code: 0 };
+        let s = StatusCode::from(status);
+        assert_eq!(StatusCode::Success, s);
+    }
 }

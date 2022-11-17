@@ -17,9 +17,9 @@ use cita_cloud_proto::client::{CryptoClientTrait, InterceptedSvc};
 use cita_cloud_proto::crypto::crypto_service_client::CryptoServiceClient;
 use cita_cloud_proto::crypto::{HashDataRequest, RecoverSignatureRequest, SignMessageRequest};
 use cita_cloud_proto::retry::RetryClient;
+use cita_cloud_proto::status_code::StatusCode;
 use log::warn;
 use prost::Message;
-use status_code::StatusCode;
 
 pub async fn hash_data(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,

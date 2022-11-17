@@ -15,7 +15,6 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=protos");
     tonic_build::configure()
-        .proto_path("https://github.com/cita-cloud/cita_cloud_proto/")
         .build_client(true)
         .build_server(true)
         .compile(
@@ -32,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "health_check.proto",
                 "status_code.proto",
             ],
-            &["protos"],
+            &["protos/protos"],
         )?;
     Ok(())
 }
