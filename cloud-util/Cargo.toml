@@ -1,0 +1,30 @@
+[package]
+name = "cloud-util"
+version = "0.6.0"
+authors = ["ypf <yuitta@163.com>", "Rivtower Technologies <contact@rivtower.com>"]
+edition = "2021"
+license = "Apache-2.0"
+description = "cita-cloud utility library"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4"
+prost = "0.11"
+toml = "0.5"
+tonic = "0.8"
+tower = "0.4"
+futures = "0.3"
+hyper = { version = "0.14", features = ["full"] }
+prometheus = "0.13"
+lazy_static = "1.4"
+regex = "1.6"
+signal-hook = "0.3"
+signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
+
+cita_cloud_proto = { path = "../cloud-proto" }
+status_code = { package = "cloud-code", git = "https://github.com/cita-cloud/status_code" }
+
+[dev-dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_derive = "1.0"
