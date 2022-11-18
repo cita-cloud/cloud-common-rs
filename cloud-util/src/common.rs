@@ -17,7 +17,7 @@ use cita_cloud_proto::blockchain::{
     Block, CompactBlock, CompactBlockBody, RawTransaction, RawTransactions,
 };
 use cita_cloud_proto::common::Address;
-use cita_cloud_proto::status_code::StatusCode;
+use cita_cloud_proto::status_code::StatusCodeEnum;
 use std::fs;
 use std::path::Path;
 use toml::macros::Deserialize;
@@ -26,28 +26,28 @@ use toml::Value;
 pub const ADDR_BYTES_LEN: usize = 20;
 pub const HASH_BYTES_LEN: usize = 32;
 
-pub fn h160_address_check(address: Option<&Address>) -> Result<(), StatusCode> {
+pub fn h160_address_check(address: Option<&Address>) -> Result<(), StatusCodeEnum> {
     match address {
         Some(addr) => {
             if addr.address.len() == ADDR_BYTES_LEN {
                 Ok(())
             } else {
-                Err(StatusCode::ProvideAddressError)
+                Err(StatusCodeEnum::ProvideAddressError)
             }
         }
-        None => Err(StatusCode::NoProvideAddress),
+        None => Err(StatusCodeEnum::NoProvideAddress),
     }
 }
 
-pub fn get_tx_hash(raw_tx: &RawTransaction) -> Result<&[u8], StatusCode> {
+pub fn get_tx_hash(raw_tx: &RawTransaction) -> Result<&[u8], StatusCodeEnum> {
     match raw_tx.tx {
         Some(Tx::NormalTx(ref normal_tx)) => Ok(&normal_tx.transaction_hash),
         Some(Tx::UtxoTx(ref utxo_tx)) => Ok(&utxo_tx.transaction_hash),
-        None => Err(StatusCode::NoTransaction),
+        None => Err(StatusCodeEnum::NoTransaction),
     }
 }
 
-pub fn get_tx_hash_list(raw_txs: &RawTransactions) -> Result<Vec<Vec<u8>>, StatusCode> {
+pub fn get_tx_hash_list(raw_txs: &RawTransactions) -> Result<Vec<Vec<u8>>, StatusCodeEnum> {
     let mut hashes = Vec::new();
     for raw_tx in &raw_txs.body {
         hashes.push(get_tx_hash(raw_tx)?.to_vec())

@@ -65,7 +65,7 @@ pub mod client;
 pub mod retry;
 
 use crate::common::StatusCode;
-use crate::status_code::StatusCode as StatusCodeEnum;
+use crate::status_code::StatusCodeEnum;
 
 impl StatusCodeEnum {
     pub fn is_success(&self) -> Result<(), StatusCodeEnum> {
@@ -110,16 +110,16 @@ impl From<u32> for StatusCodeEnum {
 
 #[cfg(test)]
 mod tests {
-    use crate::status_code::StatusCode;
+    use crate::status_code::StatusCodeEnum;
 
     #[test]
     fn it_works() {
-        println!("{:?}", StatusCode::LoadError);
-        assert_eq!(606, StatusCode::LoadError as u32);
-        assert_eq!(StatusCode::LoadError, StatusCode::from(606));
+        println!("{:?}", StatusCodeEnum::LoadError);
+        assert_eq!(606, StatusCodeEnum::LoadError as u32);
+        assert_eq!(StatusCodeEnum::LoadError, StatusCodeEnum::from(606));
 
         let status = crate::common::StatusCode { code: 0 };
-        let s = StatusCode::from(status);
-        assert_eq!(StatusCode::Success, s);
+        let s = StatusCodeEnum::from(status);
+        assert_eq!(StatusCodeEnum::Success, s);
     }
 }

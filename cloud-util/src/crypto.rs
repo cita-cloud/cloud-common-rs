@@ -17,29 +17,36 @@ use cita_cloud_proto::client::{CryptoClientTrait, InterceptedSvc};
 use cita_cloud_proto::crypto::crypto_service_client::CryptoServiceClient;
 use cita_cloud_proto::crypto::{HashDataRequest, RecoverSignatureRequest, SignMessageRequest};
 use cita_cloud_proto::retry::RetryClient;
-use cita_cloud_proto::status_code::StatusCode;
+use cita_cloud_proto::status_code::StatusCodeEnum;
 use log::warn;
 use prost::Message;
 
 pub async fn hash_data(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,
     data: &[u8],
-) -> Result<Vec<u8>, StatusCode> {
+) -> Result<Vec<u8>, StatusCodeEnum> {
     let data = data.to_vec();
     match client.hash_data(HashDataRequest { data }).await {
         Ok(hash_respond) => {
-            let status_code =
-                StatusCode::from(hash_respond.status.ok_or(StatusCode::NoneStatusCode)?.code);
+            let status_code = StatusCodeEnum::from(
+                hash_respond
+                    .status
+                    .ok_or(StatusCodeEnum::NoneStatusCode)?
+                    .code,
+            );
 
-            if status_code != StatusCode::Success {
+            if status_code != StatusCodeEnum::Success {
                 Err(status_code)
             } else {
-                Ok(hash_respond.hash.ok_or(StatusCode::NoneHashResult)?.hash)
+                Ok(hash_respond
+                    .hash
+                    .ok_or(StatusCodeEnum::NoneHashResult)?
+                    .hash)
             }
         }
         Err(status) => {
             warn!("hash_data error: {}", status.to_string());
-            Err(StatusCode::CryptoServerNotReady)
+            Err(StatusCodeEnum::CryptoServerNotReady)
         }
     }
 }
@@ -47,42 +54,42 @@ pub async fn hash_data(
 pub async fn get_block_hash(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,
     header: Option<&BlockHeader>,
-) -> Result<Vec<u8>, StatusCode> {
+) -> Result<Vec<u8>, StatusCodeEnum> {
     match header {
         Some(header) => {
             let mut block_header_bytes = Vec::with_capacity(header.encoded_len());
             header.encode(&mut block_header_bytes).map_err(|_| {
                 warn!("get_block_hash: encode block header failed");
-                StatusCode::EncodeError
+                StatusCodeEnum::EncodeError
             })?;
             let block_hash = hash_data(client, &block_header_bytes).await?;
             Ok(block_hash)
         }
-        None => Err(StatusCode::NoneBlockHeader),
+        None => Err(StatusCodeEnum::NoneBlockHeader),
     }
 }
 
 pub async fn pk2address(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,
     pk: &[u8],
-) -> Result<Vec<u8>, StatusCode> {
+) -> Result<Vec<u8>, StatusCodeEnum> {
     Ok(hash_data(client, pk).await?[HASH_BYTES_LEN - ADDR_BYTES_LEN..].to_vec())
 }
 
 pub async fn sign_message(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,
     msg: &[u8],
-) -> Result<Vec<u8>, StatusCode> {
+) -> Result<Vec<u8>, StatusCodeEnum> {
     let smr = client
         .sign_message(SignMessageRequest { msg: msg.to_vec() })
         .await
         .map_err(|e| {
             warn!("sign_message failed: {}", e.to_string());
-            StatusCode::CryptoServerNotReady
+            StatusCodeEnum::CryptoServerNotReady
         })?;
 
-    let status = StatusCode::from(smr.status.ok_or(StatusCode::NoneStatusCode)?);
-    if status != StatusCode::Success {
+    let status = StatusCodeEnum::from(smr.status.ok_or(StatusCodeEnum::NoneStatusCode)?);
+    if status != StatusCodeEnum::Success {
         Err(status)
     } else {
         Ok(smr.signature)
@@ -93,7 +100,7 @@ pub async fn recover_signature(
     client: RetryClient<CryptoServiceClient<InterceptedSvc>>,
     signature: &[u8],
     msg: &[u8],
-) -> Result<Vec<u8>, StatusCode> {
+) -> Result<Vec<u8>, StatusCodeEnum> {
     let rsr = client
         .recover_signature(RecoverSignatureRequest {
             msg: msg.to_vec(),
@@ -102,11 +109,11 @@ pub async fn recover_signature(
         .await
         .map_err(|e| {
             warn!("recover_signature failed: {}", e.to_string());
-            StatusCode::CryptoServerNotReady
+            StatusCodeEnum::CryptoServerNotReady
         })?;
 
-    let status = StatusCode::from(rsr.status.ok_or(StatusCode::NoneStatusCode)?);
-    if status != StatusCode::Success {
+    let status = StatusCodeEnum::from(rsr.status.ok_or(StatusCodeEnum::NoneStatusCode)?);
+    if status != StatusCodeEnum::Success {
         Err(status)
     } else {
         Ok(rsr.address)

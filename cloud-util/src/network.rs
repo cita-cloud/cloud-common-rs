@@ -16,18 +16,18 @@ use cita_cloud_proto::client::{InterceptedSvc, NetworkClientTrait};
 use cita_cloud_proto::network::network_service_client::NetworkServiceClient;
 use cita_cloud_proto::network::RegisterInfo;
 use cita_cloud_proto::retry::RetryClient;
-use cita_cloud_proto::status_code::StatusCode;
+use cita_cloud_proto::status_code::StatusCodeEnum;
 use log::warn;
 
 pub async fn register_network_msg_handler(
     client: RetryClient<NetworkServiceClient<InterceptedSvc>>,
     register_info: RegisterInfo,
-) -> StatusCode {
+) -> StatusCodeEnum {
     match client.register_network_msg_handler(register_info).await {
-        Ok(code) => StatusCode::from(code),
+        Ok(code) => StatusCodeEnum::from(code),
         Err(status) => {
             warn!("register_network_msg_handler error: {}", status.to_string());
-            StatusCode::NetworkServerNotReady
+            StatusCodeEnum::NetworkServerNotReady
         }
     }
 }
