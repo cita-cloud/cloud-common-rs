@@ -6,7 +6,6 @@ use hyper::{
 use lazy_static::lazy_static;
 use log::{info, warn};
 use prometheus::{gather, register_histogram, Encoder, Histogram, TextEncoder};
-use regex::Regex;
 use std::time::Instant;
 use std::{collections::HashMap, convert::Infallible};
 use std::{
@@ -66,72 +65,91 @@ where
         let clone = self.inner.clone();
         let mut inner = std::mem::replace(&mut self.inner, clone);
 
-        let s = format!("{:?}", req);
-        if s.contains("client-name") {
-            let re = Regex::new(r"(Service/)(.+)(, version)(.+)(client-name\u0022: \u0022)(.+)(\u0022, \u0022user-agent)").unwrap();
-            let caps = re.captures(&s).unwrap();
-            let func_name = caps.get(2).unwrap().as_str();
-            let client_name = caps.get(6).unwrap().as_str();
-            let key = (client_name.to_string(), func_name.to_string());
+        // parse client_name and function_name from request
+        let client_name = req
+            .headers()
+            .get("client-name")
+            .map(|v| v.to_str().unwrap());
+        let function_name = req
+            .uri()
+            .to_string()
+            .rsplit_once('/')
+            .map(|c| c.1.to_string());
 
-            let ret = {
-                let read = METRICS_DATA.read().unwrap();
-                read.contains_key(&key)
+        if let (Some(client_name), Some(function_name)) = (client_name, function_name) {
+            let key = (client_name.to_string(), function_name.to_string());
+            let is_exist = {
+                if let Ok(read) = METRICS_DATA.read() {
+                    Some(read.contains_key(&key))
+                } else {
+                    None
+                }
             };
-            if !ret {
-                match register_histogram!(
-                    format!("{}_to_{}", client_name, func_name),
-                    "request latencies in milliseconds(ms)",
-                    self.buckets.clone(),
-                ) {
-                    Ok(histogram) => {
-                        info!(
-                            "register histogram {} succeeded",
-                            format!("{}_to_{}", client_name, func_name)
-                        );
-                        {
-                            let mut write = METRICS_DATA.write().unwrap();
-                            write.insert(key.clone(), histogram);
+
+            if let Some(is_exist) = is_exist {
+                // if key not exist, register it
+                if !is_exist {
+                    match register_histogram!(
+                        format!("{}_to_{}", client_name, function_name),
+                        "request latencies in milliseconds(ms)",
+                        self.buckets.clone(),
+                    ) {
+                        Ok(histogram) => {
+                            info!(
+                                "register histogram {} succeeded",
+                                format!("{}_to_{}", client_name, function_name)
+                            );
+                            {
+                                if let Ok(mut write) = METRICS_DATA.write() {
+                                    write.insert(key.clone(), histogram);
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            warn!(
+                                "register histogram {} failed with error: {}, ignored metrics",
+                                format!("{}_to_{}", client_name, function_name),
+                                e.to_string()
+                            );
+                            return Box::pin(async move {
+                                let response = inner.call(req).await?;
+                                Ok(response)
+                            });
                         }
                     }
-                    Err(e) => {
-                        warn!(
-                            "register histogram {} failed with error: {}, ignored metrics",
-                            format!("{}_to_{}", client_name, func_name),
-                            e.to_string()
-                        );
-                        return Box::pin(async move {
-                            let response = inner.call(req).await?;
-                            Ok(response)
-                        });
-                    }
                 }
+            } else {
+                return Box::pin(async move {
+                    let response = inner.call(req).await?;
+                    Ok(response)
+                });
             }
 
-            match {
-                let read = METRICS_DATA.read().unwrap();
-                read.get(&key).cloned()
-            } {
-                Some(histogram) => Box::pin(async move {
-                    let started = Instant::now();
-
-                    let response = inner.call(req).await?;
-
-                    let elapsed = started.elapsed().as_secs_f64() * 1000f64;
-                    histogram.observe(elapsed);
-
-                    Ok(response)
-                }),
-                None => {
-                    warn!(
-                        "register histogram {} succeeded but get it failed, ignored metrics",
-                        format!("{}_to_{}", client_name, func_name)
-                    );
-                    Box::pin(async move {
+            if let Ok(read) = METRICS_DATA.read() {
+                match read.get(&key).cloned() {
+                    Some(histogram) => Box::pin(async move {
+                        let started = Instant::now();
                         let response = inner.call(req).await?;
+                        let elapsed = started.elapsed().as_secs_f64() * 1000f64;
+                        histogram.observe(elapsed);
                         Ok(response)
-                    })
+                    }),
+                    None => {
+                        warn!(
+                            "register histogram {} succeeded but get it failed, ignored metrics",
+                            format!("{}_to_{}", client_name, function_name)
+                        );
+                        Box::pin(async move {
+                            let response = inner.call(req).await?;
+                            Ok(response)
+                        })
+                    }
                 }
+            } else {
+                Box::pin(async move {
+                    let response = inner.call(req).await?;
+                    Ok(response)
+                })
             }
         } else {
             Box::pin(async move {
@@ -163,7 +181,7 @@ async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
             let mut buffer = vec![];
             let encoder = TextEncoder::new();
             let metric_families = gather();
-            encoder.encode(&metric_families, &mut buffer).unwrap();
+            let _ = encoder.encode(&metric_families, &mut buffer);
 
             Response::builder()
                 .status(200)
