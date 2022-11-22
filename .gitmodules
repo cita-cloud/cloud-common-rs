@@ -1,4 +1,4 @@
 [submodule "protos"]
 	path = cloud-proto/protos
 	url = https://github.com/cita-cloud/cita_cloud_proto.git
-	branch = simplified
+	branch = master
