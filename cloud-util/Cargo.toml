@@ -1,6 +1,6 @@
 [package]
 name = "cloud-util"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["ypf <yuitta@163.com>", "Rivtower Technologies <contact@rivtower.com>"]
 edition = "2021"
 license = "Apache-2.0"
