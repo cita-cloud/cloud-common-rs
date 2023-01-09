@@ -16,6 +16,7 @@ pub mod common;
 pub mod crypto;
 pub mod metrics;
 pub mod network;
+#[cfg(not(windows))]
 pub mod signal;
 pub mod storage;
 pub mod wal;
