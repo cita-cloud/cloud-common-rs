@@ -1,0 +1,132 @@
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Empty {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Hash {
+    #[prost(bytes = "vec", tag = "1")]
+    pub hash: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StateRoot {
+    #[prost(bytes = "vec", tag = "1")]
+    pub state_root: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Proof {
+    #[prost(bytes = "vec", tag = "1")]
+    pub proof: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Hashes {
+    #[prost(message, repeated, tag = "1")]
+    pub hashes: ::prost::alloc::vec::Vec<Hash>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Address {
+    #[prost(bytes = "vec", tag = "1")]
+    pub address: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Proposal {
+    #[prost(uint64, tag = "1")]
+    pub height: u64,
+    #[prost(bytes = "vec", tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ProposalWithProof {
+    #[prost(message, optional, tag = "1")]
+    pub proposal: ::core::option::Option<Proposal>,
+    #[prost(bytes = "vec", tag = "2")]
+    pub proof: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct BftProposal {
+    #[prost(bytes = "vec", tag = "1")]
+    pub pre_state_root: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "2")]
+    pub pre_proof: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag = "3")]
+    pub proposal: ::core::option::Option<super::blockchain::Block>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ProposalEnum {
+    #[prost(oneof = "proposal_enum::Proposal", tags = "1")]
+    pub proposal: ::core::option::Option<proposal_enum::Proposal>,
+}
+/// Nested message and enum types in `ProposalEnum`.
+pub mod proposal_enum {
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Proposal {
+        #[prost(message, tag = "1")]
+        BftProposal(super::BftProposal),
+    }
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConsensusConfiguration {
+    #[prost(uint64, tag = "1")]
+    pub height: u64,
+    #[prost(uint32, tag = "2")]
+    pub block_interval: u32,
+    #[prost(bytes = "vec", repeated, tag = "3")]
+    pub validators: ::prost::alloc::vec::Vec<::prost::alloc::vec::Vec<u8>>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StatusCode {
+    #[prost(uint32, tag = "1")]
+    pub code: u32,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct HashResponse {
+    #[prost(message, optional, tag = "1")]
+    pub status: ::core::option::Option<StatusCode>,
+    #[prost(message, optional, tag = "2")]
+    pub hash: ::core::option::Option<Hash>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ProposalResponse {
+    #[prost(message, optional, tag = "1")]
+    pub status: ::core::option::Option<StatusCode>,
+    #[prost(message, optional, tag = "2")]
+    pub proposal: ::core::option::Option<Proposal>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConsensusConfigurationResponse {
+    #[prost(message, optional, tag = "1")]
+    pub status: ::core::option::Option<StatusCode>,
+    #[prost(message, optional, tag = "2")]
+    pub config: ::core::option::Option<ConsensusConfiguration>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NodeNetInfo {
+    #[prost(string, tag = "1")]
+    pub multi_address: ::prost::alloc::string::String,
+    #[prost(uint64, tag = "2")]
+    pub origin: u64,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct TotalNodeNetInfo {
+    #[prost(message, repeated, tag = "1")]
+    pub nodes: ::prost::alloc::vec::Vec<NodeNetInfo>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NodeHeight {
+    #[prost(uint64, tag = "1")]
+    pub height: u64,
+    #[prost(bytes = "vec", tag = "2")]
+    pub address: ::prost::alloc::vec::Vec<u8>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct NodeStatus {
+    #[prost(bool, tag = "1")]
+    pub is_sync: bool,
+    #[prost(string, tag = "2")]
+    pub version: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "3")]
+    pub self_status: ::core::option::Option<NodeHeight>,
+    #[prost(message, repeated, tag = "4")]
+    pub peer_status: ::prost::alloc::vec::Vec<NodeHeight>,
+    #[prost(uint64, tag = "5")]
+    pub connected_peer_count: u64,
+    #[prost(message, optional, tag = "6")]
+    pub connected_peers_info: ::core::option::Option<TotalNodeNetInfo>,
+}
