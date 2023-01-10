@@ -67,8 +67,8 @@ impl Regions {
 /// Generated client implementations.
 pub mod storage_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
     pub struct StorageServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -112,8 +112,9 @@ pub mod storage_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             StorageServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -137,14 +138,19 @@ pub mod storage_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::Content>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/storage.StorageService/Store");
+            let path = http::uri::PathAndQuery::from_static(
+                "/storage.StorageService/Store",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// given a ext key return value
@@ -152,14 +158,19 @@ pub mod storage_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ExtKey>,
         ) -> Result<tonic::Response<super::Value>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/storage.StorageService/Load");
+            let path = http::uri::PathAndQuery::from_static(
+                "/storage.StorageService/Load",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// given a ext key delete it
@@ -167,14 +178,19 @@ pub mod storage_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::ExtKey>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/storage.StorageService/Delete");
+            let path = http::uri::PathAndQuery::from_static(
+                "/storage.StorageService/Delete",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -221,7 +237,10 @@ pub mod storage_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -249,7 +268,10 @@ pub mod storage_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -258,9 +280,13 @@ pub mod storage_service_server {
                 "/storage.StorageService/Store" => {
                     #[allow(non_camel_case_types)]
                     struct StoreSvc<T: StorageService>(pub Arc<T>);
-                    impl<T: StorageService> tonic::server::UnaryService<super::Content> for StoreSvc<T> {
+                    impl<T: StorageService> tonic::server::UnaryService<super::Content>
+                    for StoreSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::Content>,
@@ -277,10 +303,11 @@ pub mod storage_service_server {
                         let inner = inner.0;
                         let method = StoreSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -289,10 +316,17 @@ pub mod storage_service_server {
                 "/storage.StorageService/Load" => {
                     #[allow(non_camel_case_types)]
                     struct LoadSvc<T: StorageService>(pub Arc<T>);
-                    impl<T: StorageService> tonic::server::UnaryService<super::ExtKey> for LoadSvc<T> {
+                    impl<T: StorageService> tonic::server::UnaryService<super::ExtKey>
+                    for LoadSvc<T> {
                         type Response = super::Value;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
-                        fn call(&mut self, request: tonic::Request<super::ExtKey>) -> Self::Future {
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ExtKey>,
+                        ) -> Self::Future {
                             let inner = self.0.clone();
                             let fut = async move { (*inner).load(request).await };
                             Box::pin(fut)
@@ -305,10 +339,11 @@ pub mod storage_service_server {
                         let inner = inner.0;
                         let method = LoadSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -317,10 +352,17 @@ pub mod storage_service_server {
                 "/storage.StorageService/Delete" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteSvc<T: StorageService>(pub Arc<T>);
-                    impl<T: StorageService> tonic::server::UnaryService<super::ExtKey> for DeleteSvc<T> {
+                    impl<T: StorageService> tonic::server::UnaryService<super::ExtKey>
+                    for DeleteSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
-                        fn call(&mut self, request: tonic::Request<super::ExtKey>) -> Self::Future {
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ExtKey>,
+                        ) -> Self::Future {
                             let inner = self.0.clone();
                             let fut = async move { (*inner).delete(request).await };
                             Box::pin(fut)
@@ -333,23 +375,28 @@ pub mod storage_service_server {
                         let inner = inner.0;
                         let method = DeleteSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }

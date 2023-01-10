@@ -1,8 +1,8 @@
 /// Generated client implementations.
 pub mod consensus_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::http::Uri;
     use tonic::codegen::*;
+    use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
     pub struct ConsensusServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -46,8 +46,9 @@ pub mod consensus_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<
+                http::Request<tonic::body::BoxBody>,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             ConsensusServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -69,17 +70,23 @@ pub mod consensus_service_client {
         #[doc = "/ reconfigure consensus status"]
         pub async fn reconfigure(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::common::ConsensusConfiguration>,
+            request: impl tonic::IntoRequest<
+                super::super::common::ConsensusConfiguration,
+            >,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/consensus.ConsensusService/Reconfigure");
+            let path = http::uri::PathAndQuery::from_static(
+                "/consensus.ConsensusService/Reconfigure",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
         #[doc = "/ check block validity"]
@@ -87,15 +94,19 @@ pub mod consensus_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::ProposalWithProof>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner.ready().await.map_err(|e| {
-                tonic::Status::new(
-                    tonic::Code::Unknown,
-                    format!("Service was not ready: {}", e.into()),
-                )
-            })?;
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path =
-                http::uri::PathAndQuery::from_static("/consensus.ConsensusService/CheckBlock");
+            let path = http::uri::PathAndQuery::from_static(
+                "/consensus.ConsensusService/CheckBlock",
+            );
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -137,7 +148,10 @@ pub mod consensus_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(
+            inner: T,
+            interceptor: F,
+        ) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -165,7 +179,10 @@ pub mod consensus_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -174,15 +191,21 @@ pub mod consensus_service_server {
                 "/consensus.ConsensusService/Reconfigure" => {
                     #[allow(non_camel_case_types)]
                     struct ReconfigureSvc<T: ConsensusService>(pub Arc<T>);
-                    impl<T: ConsensusService>
-                        tonic::server::UnaryService<super::super::common::ConsensusConfiguration>
-                        for ReconfigureSvc<T>
-                    {
+                    impl<
+                        T: ConsensusService,
+                    > tonic::server::UnaryService<
+                        super::super::common::ConsensusConfiguration,
+                    > for ReconfigureSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::ConsensusConfiguration>,
+                            request: tonic::Request<
+                                super::super::common::ConsensusConfiguration,
+                            >,
                         ) -> Self::Future {
                             let inner = self.0.clone();
                             let fut = async move { (*inner).reconfigure(request).await };
@@ -196,10 +219,11 @@ pub mod consensus_service_server {
                         let inner = inner.0;
                         let method = ReconfigureSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -208,15 +232,21 @@ pub mod consensus_service_server {
                 "/consensus.ConsensusService/CheckBlock" => {
                     #[allow(non_camel_case_types)]
                     struct CheckBlockSvc<T: ConsensusService>(pub Arc<T>);
-                    impl<T: ConsensusService>
-                        tonic::server::UnaryService<super::super::common::ProposalWithProof>
-                        for CheckBlockSvc<T>
-                    {
+                    impl<
+                        T: ConsensusService,
+                    > tonic::server::UnaryService<
+                        super::super::common::ProposalWithProof,
+                    > for CheckBlockSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::ProposalWithProof>,
+                            request: tonic::Request<
+                                super::super::common::ProposalWithProof,
+                            >,
                         ) -> Self::Future {
                             let inner = self.0.clone();
                             let fut = async move { (*inner).check_block(request).await };
@@ -230,23 +260,28 @@ pub mod consensus_service_server {
                         let inner = inner.0;
                         let method = CheckBlockSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => Box::pin(async move {
-                    Ok(http::Response::builder()
-                        .status(200)
-                        .header("grpc-status", "12")
-                        .header("content-type", "application/grpc")
-                        .body(empty_body())
-                        .unwrap())
-                }),
+                _ => {
+                    Box::pin(async move {
+                        Ok(
+                            http::Response::builder()
+                                .status(200)
+                                .header("grpc-status", "12")
+                                .header("content-type", "application/grpc")
+                                .body(empty_body())
+                                .unwrap(),
+                        )
+                    })
+                }
             }
         }
     }

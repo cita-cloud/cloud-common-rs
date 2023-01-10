@@ -109,11 +109,13 @@ pub struct TotalNodeNetInfo {
     pub nodes: ::prost::alloc::vec::Vec<NodeNetInfo>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct NodeHeight {
+pub struct PeerStatus {
     #[prost(uint64, tag = "1")]
     pub height: u64,
     #[prost(bytes = "vec", tag = "2")]
     pub address: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag = "3")]
+    pub node_net_info: ::core::option::Option<NodeNetInfo>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NodeStatus {
@@ -122,11 +124,9 @@ pub struct NodeStatus {
     #[prost(string, tag = "2")]
     pub version: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "3")]
-    pub self_status: ::core::option::Option<NodeHeight>,
-    #[prost(message, repeated, tag = "4")]
-    pub peer_status: ::prost::alloc::vec::Vec<NodeHeight>,
-    #[prost(uint64, tag = "5")]
-    pub connected_peer_count: u64,
-    #[prost(message, optional, tag = "6")]
-    pub connected_peers_info: ::core::option::Option<TotalNodeNetInfo>,
+    pub self_status: ::core::option::Option<PeerStatus>,
+    #[prost(uint64, tag = "4")]
+    pub peers_count: u64,
+    #[prost(message, repeated, tag = "5")]
+    pub peers_status: ::prost::alloc::vec::Vec<PeerStatus>,
 }
