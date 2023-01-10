@@ -26,8 +26,8 @@ pub struct RegisterInfo {
 /// Generated client implementations.
 pub mod network_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct NetworkServiceClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -71,9 +71,8 @@ pub mod network_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::BoxBody>,
-            >>::Error: Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             NetworkServiceClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -97,19 +96,14 @@ pub mod network_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::NetworkMsg>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/network.NetworkService/SendMsg",
-            );
+            let path = http::uri::PathAndQuery::from_static("/network.NetworkService/SendMsg");
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// broadcast message to all peers.
@@ -117,38 +111,29 @@ pub mod network_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::NetworkMsg>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/network.NetworkService/Broadcast",
-            );
+            let path = http::uri::PathAndQuery::from_static("/network.NetworkService/Broadcast");
             self.inner.unary(request.into_request(), path, codec).await
         }
         pub async fn get_network_status(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
         ) -> Result<tonic::Response<super::NetworkStatusResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/network.NetworkService/GetNetworkStatus",
-            );
+            let path =
+                http::uri::PathAndQuery::from_static("/network.NetworkService/GetNetworkStatus");
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// modules which need network register its msg handler.
@@ -157,15 +142,12 @@ pub mod network_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::RegisterInfo>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/network.NetworkService/RegisterNetworkMsgHandler",
@@ -177,42 +159,31 @@ pub mod network_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::NodeNetInfo>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/network.NetworkService/AddNode",
-            );
+            let path = http::uri::PathAndQuery::from_static("/network.NetworkService/AddNode");
             self.inner.unary(request.into_request(), path, codec).await
         }
         /// get peers net info
         pub async fn get_peers_net_info(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
-        ) -> Result<
-            tonic::Response<super::super::common::TotalNodeNetInfo>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::super::common::TotalNodeNetInfo>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/network.NetworkService/GetPeersNetInfo",
-            );
+            let path =
+                http::uri::PathAndQuery::from_static("/network.NetworkService/GetPeersNetInfo");
             self.inner.unary(request.into_request(), path, codec).await
         }
     }
@@ -220,8 +191,8 @@ pub mod network_service_client {
 /// Generated client implementations.
 pub mod network_msg_handler_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     /// modules which need network must implement this service
     #[derive(Debug, Clone)]
     pub struct NetworkMsgHandlerServiceClient<T> {
@@ -266,13 +237,10 @@ pub mod network_msg_handler_service_client {
                     <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::BoxBody>,
-            >>::Error: Into<StdError> + Send + Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+                Into<StdError> + Send + Sync,
         {
-            NetworkMsgHandlerServiceClient::new(
-                InterceptedService::new(inner, interceptor),
-            )
+            NetworkMsgHandlerServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -293,15 +261,12 @@ pub mod network_msg_handler_service_client {
             &mut self,
             request: impl tonic::IntoRequest<super::NetworkMsg>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::new(
-                        tonic::Code::Unknown,
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/network.NetworkMsgHandlerService/ProcessNetworkMsg",
@@ -346,10 +311,7 @@ pub mod network_service_server {
         async fn get_peers_net_info(
             &self,
             request: tonic::Request<super::super::common::Empty>,
-        ) -> Result<
-            tonic::Response<super::super::common::TotalNodeNetInfo>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::super::common::TotalNodeNetInfo>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct NetworkServiceServer<T: NetworkService> {
@@ -370,10 +332,7 @@ pub mod network_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -401,10 +360,7 @@ pub mod network_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -413,14 +369,9 @@ pub mod network_service_server {
                 "/network.NetworkService/SendMsg" => {
                     #[allow(non_camel_case_types)]
                     struct SendMsgSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::NetworkMsg> for SendMsgSvc<T> {
+                    impl<T: NetworkService> tonic::server::UnaryService<super::NetworkMsg> for SendMsgSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::NetworkMsg>,
@@ -437,11 +388,10 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = SendMsgSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -450,15 +400,9 @@ pub mod network_service_server {
                 "/network.NetworkService/Broadcast" => {
                     #[allow(non_camel_case_types)]
                     struct BroadcastSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::NetworkMsg>
-                    for BroadcastSvc<T> {
+                    impl<T: NetworkService> tonic::server::UnaryService<super::NetworkMsg> for BroadcastSvc<T> {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::NetworkMsg>,
@@ -475,11 +419,10 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = BroadcastSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -488,23 +431,17 @@ pub mod network_service_server {
                 "/network.NetworkService/GetNetworkStatus" => {
                     #[allow(non_camel_case_types)]
                     struct GetNetworkStatusSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::super::common::Empty>
-                    for GetNetworkStatusSvc<T> {
+                    impl<T: NetworkService> tonic::server::UnaryService<super::super::common::Empty>
+                        for GetNetworkStatusSvc<T>
+                    {
                         type Response = super::NetworkStatusResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).get_network_status(request).await
-                            };
+                            let fut = async move { (*inner).get_network_status(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -515,11 +452,10 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = GetNetworkStatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -528,23 +464,18 @@ pub mod network_service_server {
                 "/network.NetworkService/RegisterNetworkMsgHandler" => {
                     #[allow(non_camel_case_types)]
                     struct RegisterNetworkMsgHandlerSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::RegisterInfo>
-                    for RegisterNetworkMsgHandlerSvc<T> {
+                    impl<T: NetworkService> tonic::server::UnaryService<super::RegisterInfo>
+                        for RegisterNetworkMsgHandlerSvc<T>
+                    {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RegisterInfo>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).register_network_msg_handler(request).await
-                            };
+                            let fut =
+                                async move { (*inner).register_network_msg_handler(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -555,11 +486,10 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = RegisterNetworkMsgHandlerSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -568,15 +498,12 @@ pub mod network_service_server {
                 "/network.NetworkService/AddNode" => {
                     #[allow(non_camel_case_types)]
                     struct AddNodeSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::super::common::NodeNetInfo>
-                    for AddNodeSvc<T> {
+                    impl<T: NetworkService>
+                        tonic::server::UnaryService<super::super::common::NodeNetInfo>
+                        for AddNodeSvc<T>
+                    {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::super::common::NodeNetInfo>,
@@ -593,11 +520,10 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = AddNodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -606,23 +532,17 @@ pub mod network_service_server {
                 "/network.NetworkService/GetPeersNetInfo" => {
                     #[allow(non_camel_case_types)]
                     struct GetPeersNetInfoSvc<T: NetworkService>(pub Arc<T>);
-                    impl<
-                        T: NetworkService,
-                    > tonic::server::UnaryService<super::super::common::Empty>
-                    for GetPeersNetInfoSvc<T> {
+                    impl<T: NetworkService> tonic::server::UnaryService<super::super::common::Empty>
+                        for GetPeersNetInfoSvc<T>
+                    {
                         type Response = super::super::common::TotalNodeNetInfo;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).get_peers_net_info(request).await
-                            };
+                            let fut = async move { (*inner).get_peers_net_info(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -633,28 +553,23 @@ pub mod network_service_server {
                         let inner = inner.0;
                         let method = GetPeersNetInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        Ok(
-                            http::Response::builder()
-                                .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
-                                .body(empty_body())
-                                .unwrap(),
-                        )
-                    })
-                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
+                        .body(empty_body())
+                        .unwrap())
+                }),
             }
         }
     }
@@ -714,10 +629,7 @@ pub mod network_msg_handler_service_server {
                 send_compression_encodings: Default::default(),
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -736,8 +648,7 @@ pub mod network_msg_handler_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>>
-    for NetworkMsgHandlerServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for NetworkMsgHandlerServiceServer<T>
     where
         T: NetworkMsgHandlerService,
         B: Body + Send + 'static,
@@ -746,10 +657,7 @@ pub mod network_msg_handler_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -758,23 +666,17 @@ pub mod network_msg_handler_service_server {
                 "/network.NetworkMsgHandlerService/ProcessNetworkMsg" => {
                     #[allow(non_camel_case_types)]
                     struct ProcessNetworkMsgSvc<T: NetworkMsgHandlerService>(pub Arc<T>);
-                    impl<
-                        T: NetworkMsgHandlerService,
-                    > tonic::server::UnaryService<super::NetworkMsg>
-                    for ProcessNetworkMsgSvc<T> {
+                    impl<T: NetworkMsgHandlerService> tonic::server::UnaryService<super::NetworkMsg>
+                        for ProcessNetworkMsgSvc<T>
+                    {
                         type Response = super::super::common::StatusCode;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::NetworkMsg>,
                         ) -> Self::Future {
                             let inner = self.0.clone();
-                            let fut = async move {
-                                (*inner).process_network_msg(request).await
-                            };
+                            let fut = async move { (*inner).process_network_msg(request).await };
                             Box::pin(fut)
                         }
                     }
@@ -785,28 +687,23 @@ pub mod network_msg_handler_service_server {
                         let inner = inner.0;
                         let method = ProcessNetworkMsgSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec)
-                            .apply_compression_config(
-                                accept_compression_encodings,
-                                send_compression_encodings,
-                            );
+                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
+                            accept_compression_encodings,
+                            send_compression_encodings,
+                        );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        Ok(
-                            http::Response::builder()
-                                .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
-                                .body(empty_body())
-                                .unwrap(),
-                        )
-                    })
-                }
+                _ => Box::pin(async move {
+                    Ok(http::Response::builder()
+                        .status(200)
+                        .header("grpc-status", "12")
+                        .header("content-type", "application/grpc")
+                        .body(empty_body())
+                        .unwrap())
+                }),
             }
         }
     }
@@ -831,7 +728,8 @@ pub mod network_msg_handler_service_server {
         }
     }
     impl<T: NetworkMsgHandlerService> tonic::server::NamedService
-    for NetworkMsgHandlerServiceServer<T> {
+        for NetworkMsgHandlerServiceServer<T>
+    {
         const NAME: &'static str = "network.NetworkMsgHandlerService";
     }
 }
