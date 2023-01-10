@@ -13,25 +13,29 @@
 // limitations under the License.
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("cargo:rerun-if-changed=protos");
-    tonic_build::configure()
-        .build_client(true)
-        .build_server(true)
-        .compile(
-            &[
-                "controller.proto",
-                "blockchain.proto",
-                "common.proto",
-                "consensus.proto",
-                "executor.proto",
-                "network.proto",
-                "storage.proto",
-                "crypto.proto",
-                "vm/evm.proto",
-                "health_check.proto",
-                "status_code.proto",
-            ],
-            &["protos/protos"],
-        )?;
+    #[cfg(feature = "tonic-build")]
+    {
+        println!("cargo:rerun-if-changed=protos");
+        tonic_build::configure()
+            .build_client(true)
+            .build_server(true)
+            .out_dir("src/proto")
+            .compile(
+                &[
+                    "controller.proto",
+                    "blockchain.proto",
+                    "common.proto",
+                    "consensus.proto",
+                    "executor.proto",
+                    "network.proto",
+                    "storage.proto",
+                    "crypto.proto",
+                    "vm/evm.proto",
+                    "health_check.proto",
+                    "status_code.proto",
+                ],
+                &["protos/protos"],
+            )?;
+    }
     Ok(())
 }

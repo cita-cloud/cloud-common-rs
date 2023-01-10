@@ -16,5 +16,11 @@ git submodule update --force --init --remote --recursive
 
 ```shell
 cargo clippy --all --all-features
-cargo build --all --all-features
+cargo build --release --all --all-features
+```
+
+- or run the script
+
+```shell
+sh update_proto.sh
 ```
