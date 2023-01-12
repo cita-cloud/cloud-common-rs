@@ -1,3 +1,4 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Content {
     #[prost(uint32, tag = "1")]
@@ -7,6 +8,7 @@ pub struct Content {
     #[prost(bytes = "vec", tag = "3")]
     pub value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ExtKey {
     #[prost(uint32, tag = "1")]
@@ -14,6 +16,7 @@ pub struct ExtKey {
     #[prost(bytes = "vec", tag = "2")]
     pub key: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Value {
     #[prost(message, optional, tag = "1")]
@@ -61,6 +64,26 @@ impl Regions {
             Regions::FullBlock => "FULL_BLOCK",
             Regions::AllBlockData => "All_BLOCK_DATA",
             Regions::Button => "BUTTON",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "GLOBAL" => Some(Self::Global),
+            "TRANSACTIONS" => Some(Self::Transactions),
+            "HEADERS" => Some(Self::Headers),
+            "BODIES" => Some(Self::Bodies),
+            "BLOCK_HASH" => Some(Self::BlockHash),
+            "PROOF" => Some(Self::Proof),
+            "RESULT" => Some(Self::Result),
+            "TRANSACTION_HASH2BLOCK_HEIGHT" => Some(Self::TransactionHash2blockHeight),
+            "BLOCK_HASH2BLOCK_HEIGHT" => Some(Self::BlockHash2blockHeight),
+            "TRANSACTION_INDEX" => Some(Self::TransactionIndex),
+            "COMPACT_BLOCK" => Some(Self::CompactBlock),
+            "FULL_BLOCK" => Some(Self::FullBlock),
+            "All_BLOCK_DATA" => Some(Self::AllBlockData),
+            "BUTTON" => Some(Self::Button),
+            _ => None,
         }
     }
 }
@@ -183,7 +206,7 @@ pub mod storage_service_client {
 pub mod storage_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with StorageServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with StorageServiceServer.
     #[async_trait]
     pub trait StorageService: Send + Sync + 'static {
         /// store key/value

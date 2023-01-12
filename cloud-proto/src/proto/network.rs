@@ -1,8 +1,10 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkStatusResponse {
     #[prost(uint64, tag = "1")]
     pub peer_count: u64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct NetworkMsg {
     #[prost(string, tag = "1")]
@@ -14,6 +16,7 @@ pub struct NetworkMsg {
     #[prost(bytes = "vec", tag = "4")]
     pub msg: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RegisterInfo {
     #[prost(string, tag = "1")]
@@ -279,7 +282,7 @@ pub mod network_msg_handler_service_client {
 pub mod network_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with NetworkServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with NetworkServiceServer.
     #[async_trait]
     pub trait NetworkService: Send + Sync + 'static {
         /// send message to a single peer.
@@ -601,7 +604,7 @@ pub mod network_service_server {
 pub mod network_msg_handler_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with NetworkMsgHandlerServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with NetworkMsgHandlerServiceServer.
     #[async_trait]
     pub trait NetworkMsgHandlerService: Send + Sync + 'static {
         async fn process_network_msg(

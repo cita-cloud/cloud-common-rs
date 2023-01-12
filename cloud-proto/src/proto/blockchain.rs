@@ -1,3 +1,4 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BlockHeader {
     /// hash of previous BlockHeader
@@ -12,6 +13,7 @@ pub struct BlockHeader {
     #[prost(bytes = "vec", tag = "5")]
     pub proposer: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Transaction {
     #[prost(uint32, tag = "1")]
@@ -36,6 +38,7 @@ pub struct Transaction {
     #[prost(bytes = "vec", tag = "8")]
     pub chain_id: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Witness {
     #[prost(bytes = "vec", tag = "1")]
@@ -44,6 +47,7 @@ pub struct Witness {
     #[prost(bytes = "vec", tag = "2")]
     pub sender: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UnverifiedTransaction {
     #[prost(message, optional, tag = "1")]
@@ -54,6 +58,7 @@ pub struct UnverifiedTransaction {
     #[prost(message, optional, tag = "3")]
     pub witness: ::core::option::Option<Witness>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UtxoTransaction {
     #[prost(uint32, tag = "1")]
@@ -65,6 +70,7 @@ pub struct UtxoTransaction {
     #[prost(uint64, tag = "4")]
     pub lock_id: u64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UnverifiedUtxoTransaction {
     #[prost(message, optional, tag = "1")]
@@ -75,11 +81,13 @@ pub struct UnverifiedUtxoTransaction {
     #[prost(message, repeated, tag = "3")]
     pub witnesses: ::prost::alloc::vec::Vec<Witness>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RawTransactions {
     #[prost(message, repeated, tag = "1")]
     pub body: ::prost::alloc::vec::Vec<RawTransaction>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RawTransaction {
     #[prost(oneof = "raw_transaction::Tx", tags = "1, 2")]
@@ -87,6 +95,7 @@ pub struct RawTransaction {
 }
 /// Nested message and enum types in `RawTransaction`.
 pub mod raw_transaction {
+    #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Tx {
         #[prost(message, tag = "1")]
@@ -95,12 +104,14 @@ pub mod raw_transaction {
         UtxoTx(super::UnverifiedUtxoTransaction),
     }
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CompactBlockBody {
     /// transaction hash of UnverifiedTransaction or UnverifyedUtxoTransaction.
     #[prost(bytes = "vec", repeated, tag = "1")]
     pub tx_hashes: ::prost::alloc::vec::Vec<::prost::alloc::vec::Vec<u8>>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CompactBlock {
     #[prost(uint32, tag = "1")]
@@ -110,6 +121,7 @@ pub struct CompactBlock {
     #[prost(message, optional, tag = "3")]
     pub body: ::core::option::Option<CompactBlockBody>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Block {
     #[prost(uint32, tag = "1")]
