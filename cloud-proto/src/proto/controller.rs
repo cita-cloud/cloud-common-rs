@@ -1,13 +1,16 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Flag {
     #[prost(bool, tag = "1")]
     pub flag: bool,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BlockNumber {
     #[prost(uint64, tag = "1")]
     pub block_number: u64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SystemConfig {
     #[prost(uint32, tag = "1")]
@@ -43,6 +46,7 @@ pub struct SystemConfig {
     #[prost(bytes = "vec", tag = "16")]
     pub block_limit_pre_hash: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct TransactionIndex {
     #[prost(uint64, tag = "1")]
@@ -511,7 +515,7 @@ pub mod consensus2_controller_service_client {
 pub mod rpc_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with RpcServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with RpcServiceServer.
     #[async_trait]
     pub trait RpcService: Send + Sync + 'static {
         /// flag means latest or pending.
@@ -1233,7 +1237,7 @@ pub mod rpc_service_server {
 pub mod consensus2_controller_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with Consensus2ControllerServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with Consensus2ControllerServiceServer.
     #[async_trait]
     pub trait Consensus2ControllerService: Send + Sync + 'static {
         /// Consensus request a Proposal to start consensus

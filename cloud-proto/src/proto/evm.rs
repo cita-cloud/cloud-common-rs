@@ -1,3 +1,4 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Receipt {
     #[prost(bytes = "vec", tag = "1")]
@@ -23,6 +24,7 @@ pub struct Receipt {
     #[prost(string, tag = "11")]
     pub error_message: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Log {
     #[prost(bytes = "vec", tag = "1")]
@@ -44,26 +46,31 @@ pub struct Log {
     #[prost(uint64, tag = "9")]
     pub transaction_log_index: u64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ByteCode {
     #[prost(bytes = "vec", tag = "1")]
     pub byte_code: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Balance {
     #[prost(bytes = "vec", tag = "1")]
     pub value: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Nonce {
     #[prost(bytes = "vec", tag = "1")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ByteAbi {
     #[prost(bytes = "vec", tag = "1")]
     pub bytes_abi: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ByteQuota {
     #[prost(bytes = "vec", tag = "1")]
@@ -228,7 +235,7 @@ pub mod rpc_service_client {
 pub mod rpc_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with RpcServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with RpcServiceServer.
     #[async_trait]
     pub trait RpcService: Send + Sync + 'static {
         async fn get_transaction_receipt(

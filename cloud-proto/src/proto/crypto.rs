@@ -1,3 +1,4 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetCryptoInfoResponse {
     #[prost(message, optional, tag = "1")]
@@ -11,11 +12,13 @@ pub struct GetCryptoInfoResponse {
     #[prost(uint32, tag = "5")]
     pub address_len: u32,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HashDataRequest {
     #[prost(bytes = "vec", tag = "1")]
     pub data: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyDataHashRequest {
     #[prost(bytes = "vec", tag = "1")]
@@ -23,11 +26,13 @@ pub struct VerifyDataHashRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub hash: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub msg: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageResponse {
     #[prost(message, optional, tag = "1")]
@@ -35,6 +40,7 @@ pub struct SignMessageResponse {
     #[prost(bytes = "vec", tag = "2")]
     pub signature: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RecoverSignatureRequest {
     #[prost(bytes = "vec", tag = "1")]
@@ -42,6 +48,7 @@ pub struct RecoverSignatureRequest {
     #[prost(bytes = "vec", tag = "2")]
     pub signature: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RecoverSignatureResponse {
     #[prost(message, optional, tag = "1")]
@@ -215,7 +222,7 @@ pub mod crypto_service_client {
 pub mod crypto_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with CryptoServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with CryptoServiceServer.
     #[async_trait]
     pub trait CryptoService: Send + Sync + 'static {
         /// Get crypto info

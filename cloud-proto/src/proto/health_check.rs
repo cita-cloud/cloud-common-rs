@@ -1,8 +1,10 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HealthCheckRequest {
     #[prost(string, tag = "1")]
     pub service: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct HealthCheckResponse {
     #[prost(enumeration = "health_check_response::ServingStatus", tag = "1")]
@@ -27,6 +29,15 @@ pub mod health_check_response {
                 ServingStatus::Unknown => "UNKNOWN",
                 ServingStatus::Serving => "SERVING",
                 ServingStatus::NotServing => "NOT_SERVING",
+            }
+        }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "UNKNOWN" => Some(Self::Unknown),
+                "SERVING" => Some(Self::Serving),
+                "NOT_SERVING" => Some(Self::NotServing),
+                _ => None,
             }
         }
     }
@@ -119,7 +130,7 @@ pub mod health_client {
 pub mod health_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with HealthServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with HealthServer.
     #[async_trait]
     pub trait Health: Send + Sync + 'static {
         async fn check(

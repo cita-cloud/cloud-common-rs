@@ -1,3 +1,4 @@
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CallRequest {
     /// 1. length is 20 bytes for evm.
@@ -15,6 +16,7 @@ pub struct CallRequest {
     #[prost(uint64, tag = "5")]
     pub height: u64,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct CallResponse {
     #[prost(bytes = "vec", tag = "1")]
@@ -123,7 +125,7 @@ pub mod executor_service_client {
 pub mod executor_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with ExecutorServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with ExecutorServiceServer.
     #[async_trait]
     pub trait ExecutorService: Send + Sync + 'static {
         /// exec a block return executed_block_hash

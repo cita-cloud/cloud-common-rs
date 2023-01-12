@@ -66,7 +66,7 @@ pub mod consensus_service_client {
             self.inner = self.inner.accept_compressed(encoding);
             self
         }
-        #[doc = "/ reconfigure consensus status"]
+        /// / reconfigure consensus status
         pub async fn reconfigure(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::ConsensusConfiguration>,
@@ -82,7 +82,7 @@ pub mod consensus_service_client {
                 http::uri::PathAndQuery::from_static("/consensus.ConsensusService/Reconfigure");
             self.inner.unary(request.into_request(), path, codec).await
         }
-        #[doc = "/ check block validity"]
+        /// / check block validity
         pub async fn check_block(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::ProposalWithProof>,
@@ -104,15 +104,15 @@ pub mod consensus_service_client {
 pub mod consensus_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    ///Generated trait containing gRPC methods that should be implemented for use with ConsensusServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with ConsensusServiceServer.
     #[async_trait]
     pub trait ConsensusService: Send + Sync + 'static {
-        #[doc = "/ reconfigure consensus status"]
+        /// / reconfigure consensus status
         async fn reconfigure(
             &self,
             request: tonic::Request<super::super::common::ConsensusConfiguration>,
         ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
-        #[doc = "/ check block validity"]
+        /// / check block validity
         async fn check_block(
             &self,
             request: tonic::Request<super::super::common::ProposalWithProof>,
