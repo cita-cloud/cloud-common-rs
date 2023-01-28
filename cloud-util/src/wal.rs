@@ -82,7 +82,7 @@ impl Wal {
             .create(true)
             .write(true)
             .open(file_path)?;
-        ifs.seek(io::SeekFrom::Start(0)).unwrap();
+        ifs.rewind().unwrap();
 
         let mut string_buf: String = String::new();
         let res_fsize = ifs.read_to_string(&mut string_buf)?;
@@ -133,7 +133,7 @@ impl Wal {
 
     fn set_index_file(&mut self, height: u64) -> io::Result<u64> {
         self.current_height = height;
-        self.ifile.seek(io::SeekFrom::Start(0))?;
+        self.ifile.rewind()?;
         let hstr = height.to_string();
         let content = hstr.as_bytes();
         let len = content.len() as u64;
@@ -222,7 +222,7 @@ impl Wal {
             if *height < self.current_height {
                 continue;
             }
-            fs.seek(io::SeekFrom::Start(0)).unwrap();
+            fs.rewind().unwrap();
             let res_fsize = fs.read_to_end(&mut vec_buf);
             if res_fsize.is_err() {
                 return vec_out;
