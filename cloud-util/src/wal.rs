@@ -14,14 +14,14 @@
 
 use log::warn;
 use std::collections::hash_map::DefaultHasher;
-use std::fs::{read_dir, DirBuilder, File, OpenOptions};
 use std::hash::{Hash, Hasher};
-use std::io::{self, Read, Seek, Write};
 use std::str;
 use std::{
     collections::{btree_map::Entry, BTreeMap},
     convert::TryInto,
 };
+use tokio::fs::{self, read_dir, DirBuilder, File, OpenOptions};
+use tokio::io::{self, AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
 
 const DELETE_FILE_INTERVAL: u64 = 8;
 const INDEX_NAME: &str = "index";
@@ -53,16 +53,16 @@ pub struct Wal {
 }
 
 impl Wal {
-    fn delete_old_file(dir: &str, current_height: u64) -> io::Result<()> {
-        for entry in read_dir(dir)? {
-            let entry = entry?;
+    async fn delete_old_file(dir: &str, current_height: u64) -> io::Result<()> {
+        let mut read_dir = read_dir(dir).await?;
+        while let Some(entry) = read_dir.next_entry().await? {
             let fpath = entry.path();
             if let Some(fname) = fpath.file_name() {
                 let strs: Vec<&str> = fname.to_str().unwrap().split('.').collect();
                 if !strs.is_empty() {
                     let num = strs[0].parse::<u64>().unwrap_or(current_height);
                     if num + DELETE_FILE_INTERVAL < current_height {
-                        ::std::fs::remove_file(fpath)?;
+                        fs::remove_file(fpath).await?;
                     }
                 }
             }
@@ -70,10 +70,10 @@ impl Wal {
         Ok(())
     }
 
-    pub fn create(dir: &str) -> io::Result<Wal> {
-        let fss = read_dir(dir);
+    pub async fn create(dir: &str) -> io::Result<Wal> {
+        let fss = read_dir(dir).await;
         if fss.is_err() {
-            DirBuilder::new().recursive(true).create(dir)?;
+            DirBuilder::new().recursive(true).create(dir).await?;
         }
 
         let file_path = dir.to_string() + "/" + INDEX_NAME;
@@ -81,11 +81,12 @@ impl Wal {
             .read(true)
             .create(true)
             .write(true)
-            .open(file_path)?;
-        ifs.seek(io::SeekFrom::Start(0)).unwrap();
+            .open(file_path)
+            .await?;
+        ifs.rewind().await?;
 
         let mut string_buf: String = String::new();
-        let res_fsize = ifs.read_to_string(&mut string_buf)?;
+        let res_fsize = ifs.read_to_string(&mut string_buf).await?;
         let num_str = string_buf.trim();
         let cur_height: u64;
         let last_file_path: String;
@@ -105,13 +106,14 @@ impl Wal {
             }
         }
 
-        Self::delete_old_file(dir, cur_height)?;
+        Self::delete_old_file(dir, cur_height).await?;
 
         let fs = OpenOptions::new()
             .read(true)
             .create(true)
             .write(true)
-            .open(last_file_path)?;
+            .open(last_file_path)
+            .await?;
 
         let mut tmp = BTreeMap::new();
         tmp.insert(cur_height, fs);
@@ -131,27 +133,28 @@ impl Wal {
         pathname + &*name
     }
 
-    fn set_index_file(&mut self, height: u64) -> io::Result<u64> {
+    async fn set_index_file(&mut self, height: u64) -> io::Result<u64> {
         self.current_height = height;
-        self.ifile.seek(io::SeekFrom::Start(0))?;
+        self.ifile.rewind().await?;
         let hstr = height.to_string();
         let content = hstr.as_bytes();
         let len = content.len() as u64;
-        self.ifile.set_len(len)?;
-        self.ifile.write_all(content)?;
-        self.ifile.sync_data()?;
+        self.ifile.set_len(len).await?;
+        self.ifile.write_all(content).await?;
+        self.ifile.sync_data().await?;
         Ok(len)
     }
 
-    pub fn set_height(&mut self, height: u64) -> io::Result<u64> {
-        let len = self.set_index_file(height)?;
+    pub async fn set_height(&mut self, height: u64) -> io::Result<u64> {
+        let len = self.set_index_file(height).await?;
         if let Entry::Vacant(entry) = self.height_fs.entry(height) {
             let filename = Wal::get_file_path(&self.dir, height);
             let fs = OpenOptions::new()
                 .create(true)
                 .read(true)
                 .append(true)
-                .open(filename)?;
+                .open(filename)
+                .await?;
             entry.insert(fs);
         }
 
@@ -159,14 +162,14 @@ impl Wal {
             let newer_file = self.height_fs.split_off(&(height - DELETE_FILE_INTERVAL));
             for &i in self.height_fs.keys() {
                 let delfilename = Wal::get_file_path(&self.dir, i);
-                let _ = ::std::fs::remove_file(delfilename);
+                let _ = fs::remove_file(delfilename).await;
             }
             self.height_fs = newer_file;
         }
         Ok(len)
     }
 
-    pub fn save(&mut self, height: u64, log_type: LogType, msg: &[u8]) -> io::Result<u64> {
+    pub async fn save(&mut self, height: u64, log_type: LogType, msg: &[u8]) -> io::Result<u64> {
         let mtype = log_type as u8;
         let mlen = msg.len() as u32;
         if mlen == 0 {
@@ -180,7 +183,8 @@ impl Wal {
                     .read(true)
                     .create(true)
                     .write(true)
-                    .open(filename)?;
+                    .open(filename)
+                    .await?;
                 entry.insert(fs);
             }
         }
@@ -190,19 +194,19 @@ impl Wal {
             let len_bytes: [u8; 4] = mlen.to_le_bytes();
             let type_bytes: [u8; 1] = [mtype];
             let check_sum = calculate_hash(&msg);
-            fs.seek(io::SeekFrom::End(0))?;
-            fs.write_all(&len_bytes[..])?;
-            fs.write_all(&type_bytes[..])?;
-            fs.write_all(&check_sum.to_le_bytes())?;
-            hlen = fs.write(msg)?;
-            fs.flush()?;
+            fs.seek(io::SeekFrom::End(0)).await?;
+            fs.write_all(&len_bytes[..]).await?;
+            fs.write_all(&type_bytes[..]).await?;
+            fs.write_all(&check_sum.to_le_bytes()).await?;
+            hlen = fs.write(msg).await?;
+            fs.flush().await?;
         } else {
             warn!(
                 "wal not save height {} current height {} ",
                 height, self.current_height
             );
         }
-        let _ = self.set_height(height);
+        let _ = self.set_height(height).await;
         Ok(hlen as u64)
     }
 
@@ -210,7 +214,7 @@ impl Wal {
         self.current_height
     }
 
-    pub fn load(&self) -> Vec<(u8, Vec<u8>)> {
+    pub async fn load(&mut self) -> Vec<(u8, Vec<u8>)> {
         let mut vec_buf: Vec<u8> = Vec::new();
         let mut vec_out: Vec<(u8, Vec<u8>)> = Vec::new();
         let cur_height = self.current_height;
@@ -218,12 +222,12 @@ impl Wal {
             return vec_out;
         }
 
-        for (height, mut fs) in &self.height_fs {
+        for (height, fs) in &mut self.height_fs {
             if *height < self.current_height {
                 continue;
             }
-            fs.seek(io::SeekFrom::Start(0)).unwrap();
-            let res_fsize = fs.read_to_end(&mut vec_buf);
+            fs.rewind().await.unwrap();
+            let res_fsize = fs.read_to_end(&mut vec_buf).await;
             if res_fsize.is_err() {
                 return vec_out;
             }
@@ -275,14 +279,15 @@ impl Wal {
         vec_out
     }
 
-    pub fn clear_file(&mut self) -> io::Result<()> {
+    pub async fn clear_file(&mut self) -> io::Result<()> {
         self.height_fs.clear();
-        for entry in read_dir(self.dir.clone())? {
-            let fpath = entry?.path();
+        let mut read_dir = read_dir(self.dir.clone()).await?;
+        while let Some(entry) = read_dir.next_entry().await? {
+            let fpath = entry.path();
             let fname = fpath.file_name().and_then(|f| f.to_str());
             if let Some(fname) = fname {
                 if !fname.contains(INDEX_NAME) {
-                    let _ = ::std::fs::remove_file(fpath);
+                    let _ = fs::remove_file(fpath).await;
                 }
             }
         }

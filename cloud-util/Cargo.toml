@@ -11,7 +11,8 @@ description = "cita-cloud utility library"
 [dependencies]
 log = "0.4"
 prost = "0.11"
-toml = "0.5"
+tokio = "1.25"
+toml = "0.7"
 tonic = "0.8"
 tower = "0.4"
 futures = "0.3"
@@ -29,3 +30,8 @@ signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
+criterion = "0.4"
+
+[[bench]]
+name = "wal"
+harness = false

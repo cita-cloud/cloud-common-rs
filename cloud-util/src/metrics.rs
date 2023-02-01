@@ -90,14 +90,14 @@ where
                 // if key not exist, register it
                 if !is_exist {
                     match register_histogram!(
-                        format!("{}_to_{}", client_name, function_name),
+                        format!("{client_name}_to_{function_name}"),
                         "request latencies in milliseconds(ms)",
                         self.buckets.clone(),
                     ) {
                         Ok(histogram) => {
                             info!(
                                 "register histogram {} succeeded",
-                                format!("{}_to_{}", client_name, function_name)
+                                format!("{client_name}_to_{function_name}")
                             );
                             {
                                 if let Ok(mut write) = METRICS_DATA.write() {
@@ -108,7 +108,7 @@ where
                         Err(e) => {
                             warn!(
                                 "register histogram {} failed with error: {}, ignored metrics",
-                                format!("{}_to_{}", client_name, function_name),
+                                format!("{client_name}_to_{function_name}"),
                                 e.to_string()
                             );
                             return Box::pin(async move {
@@ -137,7 +137,7 @@ where
                     None => {
                         warn!(
                             "register histogram {} succeeded but get it failed, ignored metrics",
-                            format!("{}_to_{}", client_name, function_name)
+                            format!("{client_name}_to_{function_name}")
                         );
                         Box::pin(async move {
                             let response = inner.call(req).await?;
