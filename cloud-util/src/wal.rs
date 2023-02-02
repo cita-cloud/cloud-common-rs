@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use log::warn;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::str;
@@ -22,6 +21,7 @@ use std::{
 };
 use tokio::fs::{self, read_dir, DirBuilder, File, OpenOptions};
 use tokio::io::{self, AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
+use tracing::warn;
 
 const DELETE_FILE_INTERVAL: u64 = 8;
 const INDEX_NAME: &str = "index";

@@ -4,7 +4,6 @@ use hyper::{
     Body, Method, Request, Response, Server,
 };
 use lazy_static::lazy_static;
-use log::{info, warn};
 use prometheus::{gather, register_histogram, Encoder, Histogram, TextEncoder};
 use std::time::Instant;
 use std::{collections::HashMap, convert::Infallible};
@@ -14,6 +13,7 @@ use std::{
 };
 use tonic::body::BoxBody;
 use tower::{Layer, Service};
+use tracing::{info, warn};
 
 lazy_static! {
     static ref METRICS_DATA: Arc<RwLock<HashMap<(String, String), Histogram>>> =

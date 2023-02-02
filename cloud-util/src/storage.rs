@@ -17,6 +17,7 @@ use cita_cloud_proto::retry::RetryClient;
 use cita_cloud_proto::status_code::StatusCodeEnum;
 use cita_cloud_proto::storage::storage_service_client::StorageServiceClient;
 use cita_cloud_proto::storage::{Content, ExtKey};
+use tracing::warn;
 
 pub async fn store_data(
     client: RetryClient<StorageServiceClient<InterceptedSvc>>,
@@ -28,7 +29,7 @@ pub async fn store_data(
     match client.store(content.clone()).await {
         Ok(code) => StatusCodeEnum::from(code),
         Err(e) => {
-            log::warn!("store_data({:?}) failed: {}", content, e.to_string());
+            warn!("store_data({:?}) failed: {}", content, e.to_string());
             StatusCodeEnum::StorageServerNotReady
         }
     }
@@ -41,7 +42,7 @@ pub async fn load_data(
 ) -> Result<Vec<u8>, StatusCodeEnum> {
     let ext_key = ExtKey { region, key };
     let value = client.load(ext_key.clone()).await.map_err(|e| {
-        log::warn!("load_data({:?}) failed: {}", ext_key, e.to_string());
+        warn!("load_data({:?}) failed: {}", ext_key, e.to_string());
         StatusCodeEnum::StorageServerNotReady
     })?;
 

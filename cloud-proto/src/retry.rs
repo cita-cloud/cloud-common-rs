@@ -30,9 +30,9 @@ use crate::{
 };
 use backoff::{backoff::Backoff, ExponentialBackoff};
 use futures_retry::{ErrorHandler, FutureRetry, RetryPolicy};
-use log::{debug, warn};
 use std::{fmt::Debug, future::Future, time::Duration};
 use tonic::Code;
+use tracing::{debug, warn};
 
 type Result<T, E = tonic::Status> = std::result::Result<T, E>;
 
