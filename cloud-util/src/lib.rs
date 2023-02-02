@@ -19,6 +19,7 @@ pub mod network;
 #[cfg(not(windows))]
 pub mod signal;
 pub mod storage;
+pub mod tracer;
 pub mod wal;
 
 pub fn unix_now() -> u64 {

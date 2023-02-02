@@ -19,6 +19,11 @@ hyper = { version = "0.14", features = ["full"] }
 prometheus = "0.13"
 lazy_static = "1.4"
 tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-opentelemetry = "0.18"
+tracing-appender = "0.2"
+opentelemetry = { version = "0.18", features = ["rt-tokio"] }
+opentelemetry-jaeger = { version = "0.17", features = ["rt-tokio"] }
 
 cita_cloud_proto = { path = "../cloud-proto" }
 
