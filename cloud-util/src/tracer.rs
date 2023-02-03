@@ -19,6 +19,7 @@ use opentelemetry::{
     propagation::{Extractor, Injector},
     sdk::propagation::TraceContextPropagator,
 };
+use serde::{Deserialize, Serialize};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
 use tracing_subscriber::{prelude::*, EnvFilter};
@@ -56,37 +57,86 @@ impl<'a> Injector for MutMetadataMap<'a> {
     }
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct LogConfig {
     max_level: String,
     filter: String,
-    path: String,
     service_name: String,
-    agent_endpoint: String,
+    rolling_file_path: Option<String>,
+    agent_endpoint: Option<String>,
+}
+
+impl Default for LogConfig {
+    fn default() -> Self {
+        Self {
+            max_level: "info".to_owned(),
+            filter: "info".to_owned(),
+            service_name: Default::default(),
+            rolling_file_path: Default::default(),
+            agent_endpoint: Default::default(),
+        }
+    }
 }
 
 pub fn init_tracer(
     node: &str,
     log_config: &LogConfig,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
-    // stdout
-    let stdout =
-        std::io::stdout.with_max_level(tracing::Level::from_str(&log_config.max_level).unwrap());
+    // agent
+    let mut agent = None;
+    if let Some(agent_endpoint) = &log_config.agent_endpoint {
+        global::set_text_map_propagator(TraceContextPropagator::new());
+        agent = Some(
+            opentelemetry_jaeger::new_agent_pipeline()
+                .with_service_name(format!("{node}-{}", &log_config.service_name))
+                .with_endpoint(agent_endpoint)
+                .install_batch(opentelemetry::runtime::Tokio)?,
+        );
+    }
 
-    // logfile
-    let logfile = tracing_appender::rolling::hourly(&log_config.path, &log_config.service_name);
+    // log
+    let mut logfile = None;
+    let mut stdout = None;
+    if let Some(rolling_file_path) = &log_config.rolling_file_path {
+        // logfile
+        logfile = Some(tracing_appender::rolling::hourly(
+            rolling_file_path,
+            &log_config.service_name,
+        ));
+    } else {
+        // stdout
+        stdout = Some(
+            std::io::stdout
+                .with_max_level(tracing::Level::from_str(&log_config.max_level).unwrap()),
+        );
+    }
 
-    // tracer
-    global::set_text_map_propagator(TraceContextPropagator::new());
-    let tracer = opentelemetry_jaeger::new_agent_pipeline()
-        .with_service_name(format!("{node}-{}", &log_config.service_name))
-        .with_endpoint(&log_config.agent_endpoint)
-        .install_batch(opentelemetry::runtime::Tokio)?;
-
-    tracing_subscriber::registry()
-        .with(EnvFilter::new(&log_config.filter))
-        .with(tracing_opentelemetry::layer().with_tracer(tracer))
-        .with(tracing_subscriber::fmt::layer().with_writer(stdout.and(logfile)))
-        .try_init()?;
+    if let Some(agent) = agent {
+        if let Some(stdout) = stdout {
+            tracing_subscriber::registry()
+                .with(EnvFilter::new(&log_config.filter))
+                .with(tracing_opentelemetry::layer().with_tracer(agent))
+                .with(tracing_subscriber::fmt::layer().with_writer(stdout))
+                .try_init()?;
+        } else {
+            tracing_subscriber::registry()
+                .with(EnvFilter::new(&log_config.filter))
+                .with(tracing_opentelemetry::layer().with_tracer(agent))
+                .with(tracing_subscriber::fmt::layer().with_writer(logfile.unwrap()))
+                .try_init()?;
+        }
+    } else if let Some(stdout) = stdout {
+        tracing_subscriber::registry()
+            .with(EnvFilter::new(&log_config.filter))
+            .with(tracing_subscriber::fmt::layer().with_writer(stdout))
+            .try_init()?;
+    } else {
+        tracing_subscriber::registry()
+            .with(EnvFilter::new(&log_config.filter))
+            .with(tracing_subscriber::fmt::layer().with_writer(logfile.unwrap()))
+            .try_init()?;
+    }
 
     Ok(())
 }
