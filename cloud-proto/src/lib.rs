@@ -20,6 +20,9 @@ pub mod client;
 mod proto;
 pub mod retry;
 
+#[macro_use]
+extern crate tracing as logger;
+
 pub use proto::{
     blockchain, common, consensus, controller, crypto, evm, executor, health_check, network,
     status_code, storage,

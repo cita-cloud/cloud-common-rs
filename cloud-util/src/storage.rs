@@ -17,7 +17,6 @@ use cita_cloud_proto::retry::RetryClient;
 use cita_cloud_proto::status_code::StatusCodeEnum;
 use cita_cloud_proto::storage::storage_service_client::StorageServiceClient;
 use cita_cloud_proto::storage::{Content, ExtKey};
-use tracing::warn;
 
 pub async fn store_data(
     client: RetryClient<StorageServiceClient<InterceptedSvc>>,

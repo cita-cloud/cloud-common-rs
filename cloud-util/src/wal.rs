@@ -21,7 +21,6 @@ use std::{
 };
 use tokio::fs::{self, read_dir, DirBuilder, File, OpenOptions};
 use tokio::io::{self, AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
-use tracing::warn;
 
 const DELETE_FILE_INTERVAL: u64 = 8;
 const INDEX_NAME: &str = "index";

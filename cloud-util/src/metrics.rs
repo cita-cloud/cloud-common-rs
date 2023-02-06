@@ -13,7 +13,6 @@ use std::{
 };
 use tonic::body::BoxBody;
 use tower::{Layer, Service};
-use tracing::{info, warn};
 
 lazy_static! {
     static ref METRICS_DATA: Arc<RwLock<HashMap<(String, String), Histogram>>> =
