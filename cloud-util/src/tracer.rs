@@ -22,7 +22,7 @@ use opentelemetry::{
 use serde::{Deserialize, Serialize};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
-use tracing_subscriber::{prelude::*, EnvFilter};
+use tracing_subscriber::{fmt::format, prelude::*, EnvFilter};
 
 struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
 
@@ -117,24 +117,44 @@ pub fn init_tracer(
             tracing_subscriber::registry()
                 .with(EnvFilter::new(&log_config.filter))
                 .with(tracing_opentelemetry::layer().with_tracer(agent))
-                .with(tracing_subscriber::fmt::layer().with_writer(stdout))
+                .with(
+                    tracing_subscriber::fmt::layer()
+                        .event_format(format().compact())
+                        .with_ansi(false)
+                        .with_writer(stdout),
+                )
                 .try_init()?;
         } else {
             tracing_subscriber::registry()
                 .with(EnvFilter::new(&log_config.filter))
                 .with(tracing_opentelemetry::layer().with_tracer(agent))
-                .with(tracing_subscriber::fmt::layer().with_writer(logfile.unwrap()))
+                .with(
+                    tracing_subscriber::fmt::layer()
+                        .event_format(format().compact())
+                        .with_ansi(false)
+                        .with_writer(logfile.unwrap()),
+                )
                 .try_init()?;
         }
     } else if let Some(stdout) = stdout {
         tracing_subscriber::registry()
             .with(EnvFilter::new(&log_config.filter))
-            .with(tracing_subscriber::fmt::layer().with_writer(stdout))
+            .with(
+                tracing_subscriber::fmt::layer()
+                    .event_format(format().compact())
+                    .with_ansi(false)
+                    .with_writer(stdout),
+            )
             .try_init()?;
     } else {
         tracing_subscriber::registry()
             .with(EnvFilter::new(&log_config.filter))
-            .with(tracing_subscriber::fmt::layer().with_writer(logfile.unwrap()))
+            .with(
+                tracing_subscriber::fmt::layer()
+                    .event_format(format().compact())
+                    .with_ansi(false)
+                    .with_writer(logfile.unwrap()),
+            )
             .try_init()?;
     }
 
