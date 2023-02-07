@@ -180,7 +180,6 @@ impl Interceptor for ServiceCallInterceptor {
     /// This function will get called on each outbound request. Returning a `Status` here will
     /// cancel the request and have that status returned to the caller.
     fn call(&mut self, mut request: tonic::Request<()>) -> Result<tonic::Request<()>, Status> {
-        inject_context(&mut request);
         let metadata = request.metadata_mut();
         metadata.insert(
             "client-name",
@@ -188,6 +187,7 @@ impl Interceptor for ServiceCallInterceptor {
                 .parse()
                 .unwrap_or_else(|_| MetadataValue::from_static("")),
         );
+        inject_context(&mut request);
 
         Ok(request)
     }
