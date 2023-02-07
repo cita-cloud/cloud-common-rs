@@ -68,7 +68,7 @@ impl Default for LogConfig {
 }
 
 pub fn init_tracer(
-    node: String,
+    domain: String,
     log_config: &LogConfig,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     // agent
@@ -80,7 +80,7 @@ pub fn init_tracer(
                 .with_service_name(&log_config.service_name)
                 .with_trace_config(
                     sdk::trace::Config::default()
-                        .with_resource(Resource::new(vec![KeyValue::new("node.address", node)])),
+                        .with_resource(Resource::new(vec![KeyValue::new("domain", domain)])),
                 )
                 .with_endpoint(agent_endpoint)
                 .install_batch(opentelemetry::runtime::Tokio)?,
