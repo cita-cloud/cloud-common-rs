@@ -14,7 +14,12 @@
 
 use std::str::FromStr;
 
-use opentelemetry::{global, propagation::Extractor, sdk::propagation::TraceContextPropagator};
+use opentelemetry::{
+    global,
+    propagation::Extractor,
+    sdk::{self, propagation::TraceContextPropagator, Resource},
+    KeyValue,
+};
 use serde::{Deserialize, Serialize};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
@@ -63,7 +68,7 @@ impl Default for LogConfig {
 }
 
 pub fn init_tracer(
-    node: &str,
+    node: String,
     log_config: &LogConfig,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync + 'static>> {
     // agent
@@ -72,7 +77,11 @@ pub fn init_tracer(
         global::set_text_map_propagator(TraceContextPropagator::new());
         agent = Some(
             opentelemetry_jaeger::new_agent_pipeline()
-                .with_service_name(format!("{node}-{}", &log_config.service_name))
+                .with_service_name(&log_config.service_name)
+                .with_trace_config(
+                    sdk::trace::Config::default()
+                        .with_resource(Resource::new(vec![KeyValue::new("node.address", node)])),
+                )
                 .with_endpoint(agent_endpoint)
                 .install_batch(opentelemetry::runtime::Tokio)?,
         );
