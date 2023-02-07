@@ -15,8 +15,10 @@ thiserror = "1.0"
 http = "0.2"
 futures-retry = "0.6"
 backoff = "0.4"
-tracing = "0.1"
 async-trait = "0.1"
+tracing = "0.1"
+tracing-opentelemetry = "0.18"
+opentelemetry = "0.18"
 
 [build-dependencies]
 tonic-build = { version = "0.8", optional = true }

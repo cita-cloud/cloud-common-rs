@@ -14,11 +14,7 @@
 
 use std::str::FromStr;
 
-use opentelemetry::{
-    global,
-    propagation::{Extractor, Injector},
-    sdk::propagation::TraceContextPropagator,
-};
+use opentelemetry::{global, propagation::Extractor, sdk::propagation::TraceContextPropagator};
 use serde::{Deserialize, Serialize};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
@@ -41,19 +37,6 @@ impl<'a> Extractor for MetadataMap<'a> {
                 tonic::metadata::KeyRef::Binary(v) => v.as_str(),
             })
             .collect::<Vec<_>>()
-    }
-}
-
-struct MutMetadataMap<'a>(&'a mut tonic::metadata::MetadataMap);
-
-impl<'a> Injector for MutMetadataMap<'a> {
-    /// Set a key and value in the MetadataMap.  Does nothing if the key or value are not valid inputs
-    fn set(&mut self, key: &str, value: String) {
-        if let Ok(key) = tonic::metadata::MetadataKey::from_bytes(key.as_bytes()) {
-            if let Ok(val) = std::str::FromStr::from_str(&value) {
-                self.0.insert(key, val);
-            }
-        }
     }
 }
 
@@ -100,7 +83,7 @@ pub fn init_tracer(
     let mut stdout = None;
     if let Some(rolling_file_path) = &log_config.rolling_file_path {
         // logfile
-        logfile = Some(tracing_appender::rolling::hourly(
+        logfile = Some(tracing_appender::rolling::daily(
             rolling_file_path,
             &log_config.service_name,
         ));
@@ -169,13 +152,4 @@ pub fn set_parent<T>(request: &Request<T>) {
     let parent_cx =
         global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
     tracing::Span::current().set_parent(parent_cx);
-}
-
-pub fn inject_context<T>(request: &mut Request<T>) {
-    global::get_text_map_propagator(|propagator| {
-        propagator.inject_context(
-            &tracing::Span::current().context(),
-            &mut MutMetadataMap(request.metadata_mut()),
-        )
-    });
 }
