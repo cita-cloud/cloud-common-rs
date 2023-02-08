@@ -13,7 +13,6 @@
 // limitations under the License.
 
 use futures::stream::StreamExt;
-use log::{info, warn};
 use signal_hook::{consts::signal::*, low_level::exit};
 use signal_hook_tokio::Signals;
 

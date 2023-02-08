@@ -4,7 +4,6 @@ use hyper::{
     Body, Method, Request, Response, Server,
 };
 use lazy_static::lazy_static;
-use log::{info, warn};
 use prometheus::{gather, register_histogram, Encoder, Histogram, TextEncoder};
 use std::time::Instant;
 use std::{collections::HashMap, convert::Infallible};

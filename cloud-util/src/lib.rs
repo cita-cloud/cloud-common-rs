@@ -19,7 +19,11 @@ pub mod network;
 #[cfg(not(windows))]
 pub mod signal;
 pub mod storage;
+pub mod tracer;
 pub mod wal;
+
+#[macro_use]
+extern crate tracing as logger;
 
 pub fn unix_now() -> u64 {
     let d = ::std::time::UNIX_EPOCH.elapsed().unwrap();

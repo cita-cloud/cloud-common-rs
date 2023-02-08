@@ -26,11 +26,13 @@ use crate::{
 };
 use backoff::{ExponentialBackoff, SystemClock};
 use http::uri::InvalidUri;
+use opentelemetry::{global, propagation::Injector};
 use std::time::{Duration, Instant};
 use tonic::{
     codegen::InterceptedService, metadata::MetadataValue, service::Interceptor, transport::Channel,
-    Status,
+    Request, Status,
 };
+use tracing_opentelemetry::OpenTelemetrySpanExt;
 
 pub type InterceptedSvc = InterceptedService<Channel, ServiceCallInterceptor>;
 
@@ -185,6 +187,7 @@ impl Interceptor for ServiceCallInterceptor {
                 .parse()
                 .unwrap_or_else(|_| MetadataValue::from_static("")),
         );
+        inject_context(&mut request);
 
         Ok(request)
     }
@@ -483,4 +486,26 @@ pub trait StorageClientTrait {
     async fn load(&self, key: storage::ExtKey) -> Result<storage::Value, tonic::Status>;
 
     async fn delete(&self, key: storage::ExtKey) -> Result<common::StatusCode, tonic::Status>;
+}
+
+struct MutMetadataMap<'a>(&'a mut tonic::metadata::MetadataMap);
+
+impl<'a> Injector for MutMetadataMap<'a> {
+    /// Set a key and value in the MetadataMap.  Does nothing if the key or value are not valid inputs
+    fn set(&mut self, key: &str, value: String) {
+        if let Ok(key) = tonic::metadata::MetadataKey::from_bytes(key.as_bytes()) {
+            if let Ok(val) = std::str::FromStr::from_str(&value) {
+                self.0.insert(key, val);
+            }
+        }
+    }
+}
+
+fn inject_context<T>(request: &mut Request<T>) {
+    global::get_text_map_propagator(|propagator| {
+        propagator.inject_context(
+            &tracing::Span::current().context(),
+            &mut MutMetadataMap(request.metadata_mut()),
+        )
+    });
 }
