@@ -21,9 +21,10 @@ use opentelemetry::{
     KeyValue,
 };
 use serde::{Deserialize, Serialize};
+use time::{format_description::well_known, UtcOffset};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
-use tracing_subscriber::{fmt::format, prelude::*, EnvFilter};
+use tracing_subscriber::{fmt::format, fmt::time::OffsetTime, prelude::*, EnvFilter};
 
 struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
 
@@ -104,6 +105,13 @@ pub fn init_tracer(
         );
     }
 
+    // set timer
+    let timer = OffsetTime::local_rfc_3339().unwrap_or({
+        let offset = UtcOffset::from_hms(8, 0, 0).unwrap();
+        let time_format = well_known::Rfc3339;
+        OffsetTime::new(offset, time_format)
+    });
+
     if let Some(agent) = agent {
         if let Some(stdout) = stdout {
             tracing_subscriber::registry()
@@ -113,6 +121,7 @@ pub fn init_tracer(
                     tracing_subscriber::fmt::layer()
                         .event_format(format().compact())
                         .with_ansi(false)
+                        .with_timer(timer)
                         .with_writer(stdout),
                 )
                 .try_init()?;
@@ -124,6 +133,7 @@ pub fn init_tracer(
                     tracing_subscriber::fmt::layer()
                         .event_format(format().compact())
                         .with_ansi(false)
+                        .with_timer(timer)
                         .with_writer(logfile.unwrap()),
                 )
                 .try_init()?;
@@ -135,6 +145,7 @@ pub fn init_tracer(
                 tracing_subscriber::fmt::layer()
                     .event_format(format().compact())
                     .with_ansi(false)
+                    .with_timer(timer)
                     .with_writer(stdout),
             )
             .try_init()?;
@@ -145,6 +156,7 @@ pub fn init_tracer(
                 tracing_subscriber::fmt::layer()
                     .event_format(format().compact())
                     .with_ansi(false)
+                    .with_timer(timer)
                     .with_writer(logfile.unwrap()),
             )
             .try_init()?;
