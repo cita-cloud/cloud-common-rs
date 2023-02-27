@@ -43,7 +43,7 @@ fn register_metrics(
                 histogram_buckets.unwrap_or(exponential_buckets(0.0001, 10.0, 8).unwrap()),
             ) {
                 Ok(h) => {
-                    warn!("register histogram: {key} success");
+                    info!("register histogram: {key} success");
                     Some(MetricsType::Histogram(Some(h)))
                 }
                 Err(e) => {
@@ -54,7 +54,7 @@ fn register_metrics(
         }
         MetricsType::Gauge(_) => match register_gauge!(key, help_info,) {
             Ok(g) => {
-                warn!("register gauge: {key} success");
+                info!("register gauge: {key} success");
                 Some(MetricsType::Gauge(Some(g)))
             }
             Err(e) => {
@@ -64,7 +64,7 @@ fn register_metrics(
         },
         MetricsType::Counter(_) => match register_counter!(key, help_info,) {
             Ok(c) => {
-                warn!("register counter: {key} success");
+                info!("register counter: {key} success");
                 Some(MetricsType::Counter(Some(c)))
             }
             Err(e) => {
