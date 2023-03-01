@@ -14,6 +14,7 @@
 
 use std::str::FromStr;
 
+use chrono::{Local, Offset};
 use opentelemetry::{
     global,
     propagation::Extractor,
@@ -106,11 +107,10 @@ pub fn init_tracer(
     }
 
     // set timer
-    let timer = OffsetTime::local_rfc_3339().unwrap_or({
-        let offset = UtcOffset::from_hms(8, 0, 0).unwrap();
-        let time_format = well_known::Rfc3339;
-        OffsetTime::new(offset, time_format)
-    });
+    let local_offset_sec = Local::now().offset().fix().local_minus_utc();
+    let utc_offset = UtcOffset::from_whole_seconds(local_offset_sec)
+        .unwrap_or(UtcOffset::from_hms(8, 0, 0).unwrap());
+    let timer = OffsetTime::new(utc_offset, well_known::Rfc3339);
 
     if let Some(agent) = agent {
         if let Some(stdout) = stdout {
