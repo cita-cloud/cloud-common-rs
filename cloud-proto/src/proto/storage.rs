@@ -66,6 +66,26 @@ impl Regions {
             Regions::Button => "BUTTON",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "GLOBAL" => Some(Self::Global),
+            "TRANSACTIONS" => Some(Self::Transactions),
+            "HEADERS" => Some(Self::Headers),
+            "BODIES" => Some(Self::Bodies),
+            "BLOCK_HASH" => Some(Self::BlockHash),
+            "PROOF" => Some(Self::Proof),
+            "RESULT" => Some(Self::Result),
+            "TRANSACTION_HASH2BLOCK_HEIGHT" => Some(Self::TransactionHash2blockHeight),
+            "BLOCK_HASH2BLOCK_HEIGHT" => Some(Self::BlockHash2blockHeight),
+            "TRANSACTION_INDEX" => Some(Self::TransactionIndex),
+            "COMPACT_BLOCK" => Some(Self::CompactBlock),
+            "FULL_BLOCK" => Some(Self::FullBlock),
+            "All_BLOCK_DATA" => Some(Self::AllBlockData),
+            "BUTTON" => Some(Self::Button),
+            _ => None,
+        }
+    }
 }
 /// Generated client implementations.
 pub mod storage_service_client {
