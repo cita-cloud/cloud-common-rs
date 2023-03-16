@@ -151,4 +151,6 @@ pub struct NodeStatus {
     pub peers_status: ::prost::alloc::vec::Vec<PeerStatus>,
     #[prost(bool, tag = "6")]
     pub is_danger: bool,
+    #[prost(uint64, tag = "7")]
+    pub init_block_number: u64,
 }
