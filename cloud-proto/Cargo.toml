@@ -10,7 +10,7 @@ description = "cita-cloud proto library"
 [dependencies]
 tonic = "0.8"
 prost = "0.11"
-tokio = { version = "1.25", features = ["full"] }
+tokio = { version = "1.26", features = ["full"] }
 thiserror = "1.0"
 http = "0.2"
 futures-retry = "0.6"

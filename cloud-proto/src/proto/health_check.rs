@@ -31,6 +31,15 @@ pub mod health_check_response {
                 ServingStatus::NotServing => "NOT_SERVING",
             }
         }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "UNKNOWN" => Some(Self::Unknown),
+                "SERVING" => Some(Self::Serving),
+                "NOT_SERVING" => Some(Self::NotServing),
+                _ => None,
+            }
+        }
     }
 }
 /// Generated client implementations.

@@ -24,6 +24,7 @@ use tokio::io::{self, AsyncReadExt, AsyncSeekExt, AsyncWriteExt};
 
 const DELETE_FILE_INTERVAL: u64 = 8;
 const INDEX_NAME: &str = "index";
+const LOGS_PATH: &str = "/logs";
 
 #[derive(Debug, Clone, Copy)]
 pub enum LogType {
@@ -89,14 +90,22 @@ impl Wal {
         let num_str = string_buf.trim();
         let cur_height: u64;
         let last_file_path: String;
+
+        let logs_dir = dir.to_string() + LOGS_PATH;
+        let logsfss = read_dir(&logs_dir).await;
+        if logsfss.is_err() {
+            DirBuilder::new().recursive(true).create(&logs_dir).await?;
+        }
+
         if res_fsize == 0 {
-            last_file_path = dir.to_string() + "/1.log";
+            last_file_path = dir.to_string() + LOGS_PATH + "/1.log";
             cur_height = 0;
         } else {
             let hi_res = num_str.parse::<u64>();
             if let Ok(hi) = hi_res {
                 cur_height = hi;
-                last_file_path = dir.to_string() + "/" + cur_height.to_string().as_str() + ".log"
+                last_file_path =
+                    dir.to_string() + LOGS_PATH + "/" + cur_height.to_string().as_str() + ".log"
             } else {
                 return Err(io::Error::new(
                     io::ErrorKind::InvalidData,
@@ -105,7 +114,7 @@ impl Wal {
             }
         }
 
-        Self::delete_old_file(dir, cur_height).await?;
+        Self::delete_old_file(&(dir.to_string() + LOGS_PATH + "/"), cur_height).await?;
 
         let fs = OpenOptions::new()
             .read(true)
@@ -128,7 +137,7 @@ impl Wal {
     fn get_file_path(dir: &str, height: u64) -> String {
         let mut name = height.to_string();
         name += ".log";
-        let pathname = dir.to_string() + "/";
+        let pathname = dir.to_string() + LOGS_PATH + "/";
         pathname + &*name
     }
 
@@ -175,13 +184,19 @@ impl Wal {
             return Ok(0);
         }
 
+        let logs_dir = self.dir.to_string() + LOGS_PATH;
+        let logsfss = read_dir(&logs_dir).await;
+        if logsfss.is_err() {
+            DirBuilder::new().recursive(true).create(&logs_dir).await?;
+        }
+
         if height > self.current_height && height < self.current_height + DELETE_FILE_INTERVAL {
             if let Entry::Vacant(entry) = self.height_fs.entry(height) {
                 let filename = Wal::get_file_path(&self.dir, height);
                 let fs = OpenOptions::new()
                     .read(true)
-                    .create(true)
                     .write(true)
+                    .create(true)
                     .open(filename)
                     .await?;
                 entry.insert(fs);
@@ -280,17 +295,7 @@ impl Wal {
 
     pub async fn clear_file(&mut self) -> io::Result<()> {
         self.height_fs.clear();
-        let mut read_dir = read_dir(self.dir.clone()).await?;
-        while let Some(entry) = read_dir.next_entry().await? {
-            let fpath = entry.path();
-            let fname = fpath.file_name().and_then(|f| f.to_str());
-            if let Some(fname) = fname {
-                if !fname.contains(INDEX_NAME) {
-                    let _ = fs::remove_file(fpath).await;
-                }
-            }
-        }
-        Ok(())
+        fs::remove_dir_all(&(self.dir.to_string() + LOGS_PATH)).await
     }
 }
 
