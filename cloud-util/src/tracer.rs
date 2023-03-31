@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::str::FromStr;
-
 use chrono::{Local, Offset};
 use opentelemetry::{
     global,
     propagation::Extractor,
-    sdk::{self, propagation::TraceContextPropagator, Resource},
+    sdk::{self, propagation::TraceContextPropagator, runtime, trace::Sampler, Resource},
     KeyValue,
 };
+use opentelemetry_http::hyper::HyperClient;
 use serde::{Deserialize, Serialize};
+use std::{str::FromStr, time::Duration};
 use time::{format_description::well_known, UtcOffset};
 use tonic::Request;
 use tracing_opentelemetry::OpenTelemetrySpanExt;
@@ -82,6 +82,20 @@ pub fn init_tracer(
                 .with_service_name(&log_config.service_name)
                 .with_trace_config(
                     sdk::trace::Config::default()
+                        .with_sampler(
+                            Sampler::jaeger_remote(
+                                runtime::Tokio,
+                                HyperClient::new_with_timeout(
+                                    hyper::Client::new(),
+                                    Duration::from_secs(1),
+                                ),
+                                Sampler::AlwaysOff,
+                                &log_config.service_name,
+                            )
+                            .with_endpoint(agent_endpoint)
+                            .build()
+                            .unwrap(),
+                        )
                         .with_resource(Resource::new(vec![KeyValue::new("domain", domain)])),
                 )
                 .with_endpoint(agent_endpoint)
