@@ -1,6 +1,6 @@
 [package]
 name = "cloud-util"
-version = "0.6.1"
+version = "0.6.2"
 authors = ["ypf <yuitta@163.com>", "Rivtower Technologies <contact@rivtower.com>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -10,9 +10,9 @@ description = "cita-cloud utility library"
 
 [dependencies]
 prost = "0.11"
-tokio = "1.26"
+tokio = "1.27"
 toml = "0.7"
-tonic = "0.8"
+tonic = "0.9"
 tower = "0.4"
 futures = "0.3"
 hyper = { version = "0.14", features = ["full"] }

@@ -69,7 +69,7 @@ pub mod crypto_service_client {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
-            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D: TryInto<tonic::transport::Endpoint>,
             D::Error: Into<StdError>,
         {
             let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
@@ -124,11 +124,28 @@ pub mod crypto_service_client {
             self.inner = self.inner.accept_compressed(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
         /// Get crypto info
         pub async fn get_crypto_info(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::GetCryptoInfoResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::GetCryptoInfoResponse>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -137,13 +154,17 @@ pub mod crypto_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/crypto.CryptoService/GetCryptoInfo");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "GetCryptoInfo"));
+            self.inner.unary(req, path, codec).await
         }
         /// Hash data
         pub async fn hash_data(
             &mut self,
             request: impl tonic::IntoRequest<super::HashDataRequest>,
-        ) -> Result<tonic::Response<super::super::common::HashResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::HashResponse>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -152,13 +173,17 @@ pub mod crypto_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/crypto.CryptoService/HashData");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "HashData"));
+            self.inner.unary(req, path, codec).await
         }
         /// Verify hash of data
         pub async fn verify_data_hash(
             &mut self,
             request: impl tonic::IntoRequest<super::VerifyDataHashRequest>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -167,13 +192,17 @@ pub mod crypto_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/crypto.CryptoService/VerifyDataHash");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "VerifyDataHash"));
+            self.inner.unary(req, path, codec).await
         }
         /// Sign a message
         pub async fn sign_message(
             &mut self,
             request: impl tonic::IntoRequest<super::SignMessageRequest>,
-        ) -> Result<tonic::Response<super::SignMessageResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::SignMessageResponse>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -182,13 +211,17 @@ pub mod crypto_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/crypto.CryptoService/SignMessage");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "SignMessage"));
+            self.inner.unary(req, path, codec).await
         }
         /// Recover signature
         pub async fn recover_signature(
             &mut self,
             request: impl tonic::IntoRequest<super::RecoverSignatureRequest>,
-        ) -> Result<tonic::Response<super::RecoverSignatureResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::RecoverSignatureResponse>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -198,13 +231,17 @@ pub mod crypto_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/crypto.CryptoService/RecoverSignature");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "RecoverSignature"));
+            self.inner.unary(req, path, codec).await
         }
         /// check transactions
         pub async fn check_transactions(
             &mut self,
             request: impl tonic::IntoRequest<super::super::blockchain::RawTransactions>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -214,7 +251,10 @@ pub mod crypto_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/crypto.CryptoService/CheckTransactions");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("crypto.CryptoService", "CheckTransactions"));
+            self.inner.unary(req, path, codec).await
         }
     }
 }
@@ -229,38 +269,40 @@ pub mod crypto_service_server {
         async fn get_crypto_info(
             &self,
             request: tonic::Request<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::GetCryptoInfoResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::GetCryptoInfoResponse>, tonic::Status>;
         /// Hash data
         async fn hash_data(
             &self,
             request: tonic::Request<super::HashDataRequest>,
-        ) -> Result<tonic::Response<super::super::common::HashResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::HashResponse>, tonic::Status>;
         /// Verify hash of data
         async fn verify_data_hash(
             &self,
             request: tonic::Request<super::VerifyDataHashRequest>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
         /// Sign a message
         async fn sign_message(
             &self,
             request: tonic::Request<super::SignMessageRequest>,
-        ) -> Result<tonic::Response<super::SignMessageResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::SignMessageResponse>, tonic::Status>;
         /// Recover signature
         async fn recover_signature(
             &self,
             request: tonic::Request<super::RecoverSignatureRequest>,
-        ) -> Result<tonic::Response<super::RecoverSignatureResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::RecoverSignatureResponse>, tonic::Status>;
         /// check transactions
         async fn check_transactions(
             &self,
             request: tonic::Request<super::super::blockchain::RawTransactions>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct CryptoServiceServer<T: CryptoService> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: CryptoService> CryptoServiceServer<T> {
@@ -273,6 +315,8 @@ pub mod crypto_service_server {
                 inner,
                 accept_compression_encodings: Default::default(),
                 send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
             }
         }
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
@@ -293,6 +337,22 @@ pub mod crypto_service_server {
             self.send_compression_encodings.enable(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for CryptoServiceServer<T>
     where
@@ -303,7 +363,10 @@ pub mod crypto_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -321,22 +384,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_crypto_info(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetCryptoInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -352,22 +422,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::HashDataRequest>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).hash_data(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = HashDataSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -385,22 +462,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::VerifyDataHashRequest>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).verify_data_hash(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = VerifyDataHashSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -418,22 +502,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::SignMessageRequest>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).sign_message(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = SignMessageSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -452,22 +543,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::RecoverSignatureRequest>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).recover_signature(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = RecoverSignatureSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -486,22 +584,29 @@ pub mod crypto_service_server {
                             &mut self,
                             request: tonic::Request<super::super::blockchain::RawTransactions>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).check_transactions(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = CheckTransactionsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -525,12 +630,14 @@ pub mod crypto_service_server {
                 inner,
                 accept_compression_encodings: self.accept_compression_encodings,
                 send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
             }
         }
     }
     impl<T: CryptoService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone())
+            Self(Arc::clone(&self.0))
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {

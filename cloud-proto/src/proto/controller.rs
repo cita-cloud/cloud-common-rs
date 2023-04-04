@@ -65,7 +65,7 @@ pub mod rpc_service_client {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
-            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D: TryInto<tonic::transport::Endpoint>,
             D::Error: Into<StdError>,
         {
             let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
@@ -120,12 +120,28 @@ pub mod rpc_service_client {
             self.inner = self.inner.accept_compressed(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
         /// flag means latest or pending.
         /// true means pending, false means latest.
         pub async fn get_block_number(
             &mut self,
             request: impl tonic::IntoRequest<super::Flag>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -135,12 +151,16 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetBlockNumber");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetBlockNumber"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn send_raw_transaction(
             &mut self,
             request: impl tonic::IntoRequest<super::super::blockchain::RawTransaction>,
-        ) -> Result<tonic::Response<super::super::common::Hash>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -150,12 +170,18 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/SendRawTransaction");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "SendRawTransaction",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn send_raw_transactions(
             &mut self,
             request: impl tonic::IntoRequest<super::super::blockchain::RawTransactions>,
-        ) -> Result<tonic::Response<super::super::common::Hashes>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::Hashes>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -165,13 +191,20 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/SendRawTransactions");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "SendRawTransactions",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_by_hash(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::super::blockchain::CompactBlock>, tonic::Status>
-        {
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::CompactBlock>,
+            tonic::Status,
+        > {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -181,12 +214,15 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetBlockByHash");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetBlockByHash"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_height_by_hash(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -196,13 +232,18 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetHeightByHash");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetHeightByHash"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_by_number(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::blockchain::CompactBlock>, tonic::Status>
-        {
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::CompactBlock>,
+            tonic::Status,
+        > {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -212,12 +253,16 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetBlockByNumber");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetBlockByNumber"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_state_root_by_number(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::StateRoot>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::StateRoot>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -227,12 +272,18 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetStateRootByNumber");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "GetStateRootByNumber",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_proof_by_number(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::Proof>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::Proof>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -242,12 +293,16 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetProofByNumber");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetProofByNumber"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_detail_by_number(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::blockchain::Block>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::blockchain::Block>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -258,13 +313,20 @@ pub mod rpc_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.RPCService/GetBlockDetailByNumber",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "GetBlockDetailByNumber",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_transaction(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::super::blockchain::RawTransaction>, tonic::Status>
-        {
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::RawTransaction>,
+            tonic::Status,
+        > {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -274,12 +336,15 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetTransaction");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetTransaction"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_system_config(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::SystemConfig>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::SystemConfig>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -289,12 +354,15 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetSystemConfig");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetSystemConfig"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_system_config_by_number(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::SystemConfig>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::SystemConfig>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -305,12 +373,18 @@ pub mod rpc_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.RPCService/GetSystemConfigByNumber",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "GetSystemConfigByNumber",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_hash(
             &mut self,
             request: impl tonic::IntoRequest<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::Hash>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -319,12 +393,15 @@ pub mod rpc_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/controller.RPCService/GetBlockHash");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetBlockHash"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_transaction_block_number(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -335,12 +412,17 @@ pub mod rpc_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.RPCService/GetTransactionBlockNumber",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "GetTransactionBlockNumber",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_transaction_index(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::TransactionIndex>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::TransactionIndex>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -350,13 +432,19 @@ pub mod rpc_service_client {
             let codec = tonic::codec::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/controller.RPCService/GetTransactionIndex");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.RPCService",
+                "GetTransactionIndex",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         /// add new node
         pub async fn add_node(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::NodeNetInfo>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -365,12 +453,16 @@ pub mod rpc_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/controller.RPCService/AddNode");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "AddNode"));
+            self.inner.unary(req, path, codec).await
         }
         pub async fn get_node_status(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::super::common::NodeStatus>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::NodeStatus>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -379,7 +471,10 @@ pub mod rpc_service_client {
             })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/controller.RPCService/GetNodeStatus");
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("controller.RPCService", "GetNodeStatus"));
+            self.inner.unary(req, path, codec).await
         }
     }
 }
@@ -396,7 +491,7 @@ pub mod consensus2_controller_service_client {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
-            D: std::convert::TryInto<tonic::transport::Endpoint>,
+            D: TryInto<tonic::transport::Endpoint>,
             D::Error: Into<StdError>,
         {
             let conn = tonic::transport::Endpoint::new(dst)?.connect().await?;
@@ -451,13 +546,31 @@ pub mod consensus2_controller_service_client {
             self.inner = self.inner.accept_compressed(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_decoding_message_size(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.inner = self.inner.max_encoding_message_size(limit);
+            self
+        }
         /// Consensus request a Proposal to start consensus
         /// ret: proposal
         pub async fn get_proposal(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::super::common::ProposalResponse>, tonic::Status>
-        {
+        ) -> std::result::Result<
+            tonic::Response<super::super::common::ProposalResponse>,
+            tonic::Status,
+        > {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -468,7 +581,12 @@ pub mod consensus2_controller_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.Consensus2ControllerService/GetProposal",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.Consensus2ControllerService",
+                "GetProposal",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         /// when Consensus received a new proposal from other nodes, it will ask controller to check it
         /// args: proposal hash
@@ -476,7 +594,8 @@ pub mod consensus2_controller_service_client {
         pub async fn check_proposal(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::Proposal>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>
+        {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
                     tonic::Code::Unknown,
@@ -487,13 +606,18 @@ pub mod consensus2_controller_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.Consensus2ControllerService/CheckProposal",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.Consensus2ControllerService",
+                "CheckProposal",
+            ));
+            self.inner.unary(req, path, codec).await
         }
         /// after Consensus, tell controller a proposal has committed
         pub async fn commit_block(
             &mut self,
             request: impl tonic::IntoRequest<super::super::common::ProposalWithProof>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::super::common::ConsensusConfigurationResponse>,
             tonic::Status,
         > {
@@ -507,7 +631,12 @@ pub mod consensus2_controller_service_client {
             let path = http::uri::PathAndQuery::from_static(
                 "/controller.Consensus2ControllerService/CommitBlock",
             );
-            self.inner.unary(request.into_request(), path, codec).await
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new(
+                "controller.Consensus2ControllerService",
+                "CommitBlock",
+            ));
+            self.inner.unary(req, path, codec).await
         }
     }
 }
@@ -523,78 +652,89 @@ pub mod rpc_service_server {
         async fn get_block_number(
             &self,
             request: tonic::Request<super::Flag>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status>;
         async fn send_raw_transaction(
             &self,
             request: tonic::Request<super::super::blockchain::RawTransaction>,
-        ) -> Result<tonic::Response<super::super::common::Hash>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>;
         async fn send_raw_transactions(
             &self,
             request: tonic::Request<super::super::blockchain::RawTransactions>,
-        ) -> Result<tonic::Response<super::super::common::Hashes>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::Hashes>, tonic::Status>;
         async fn get_block_by_hash(
             &self,
             request: tonic::Request<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::super::blockchain::CompactBlock>, tonic::Status>;
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::CompactBlock>,
+            tonic::Status,
+        >;
         async fn get_height_by_hash(
             &self,
             request: tonic::Request<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status>;
         async fn get_block_by_number(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::blockchain::CompactBlock>, tonic::Status>;
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::CompactBlock>,
+            tonic::Status,
+        >;
         async fn get_state_root_by_number(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::StateRoot>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::StateRoot>, tonic::Status>;
         async fn get_proof_by_number(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::Proof>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::Proof>, tonic::Status>;
         async fn get_block_detail_by_number(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::blockchain::Block>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::blockchain::Block>, tonic::Status>;
         async fn get_transaction(
             &self,
             request: tonic::Request<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::super::blockchain::RawTransaction>, tonic::Status>;
+        ) -> std::result::Result<
+            tonic::Response<super::super::blockchain::RawTransaction>,
+            tonic::Status,
+        >;
         async fn get_system_config(
             &self,
             request: tonic::Request<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::SystemConfig>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::SystemConfig>, tonic::Status>;
         async fn get_system_config_by_number(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::SystemConfig>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::SystemConfig>, tonic::Status>;
         async fn get_block_hash(
             &self,
             request: tonic::Request<super::BlockNumber>,
-        ) -> Result<tonic::Response<super::super::common::Hash>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>;
         async fn get_transaction_block_number(
             &self,
             request: tonic::Request<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::BlockNumber>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::BlockNumber>, tonic::Status>;
         async fn get_transaction_index(
             &self,
             request: tonic::Request<super::super::common::Hash>,
-        ) -> Result<tonic::Response<super::TransactionIndex>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::TransactionIndex>, tonic::Status>;
         /// add new node
         async fn add_node(
             &self,
             request: tonic::Request<super::super::common::NodeNetInfo>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
         async fn get_node_status(
             &self,
             request: tonic::Request<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::super::common::NodeStatus>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::NodeStatus>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct RpcServiceServer<T: RpcService> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: RpcService> RpcServiceServer<T> {
@@ -607,6 +747,8 @@ pub mod rpc_service_server {
                 inner,
                 accept_compression_encodings: Default::default(),
                 send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
             }
         }
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
@@ -627,6 +769,22 @@ pub mod rpc_service_server {
             self.send_compression_encodings.enable(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for RpcServiceServer<T>
     where
@@ -637,7 +795,10 @@ pub mod rpc_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -650,22 +811,29 @@ pub mod rpc_service_server {
                         type Response = super::BlockNumber;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(&mut self, request: tonic::Request<super::Flag>) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_block_number(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetBlockNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -684,22 +852,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::blockchain::RawTransaction>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).send_raw_transaction(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = SendRawTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -718,22 +893,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::blockchain::RawTransactions>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).send_raw_transactions(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = SendRawTransactionsSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -751,22 +933,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_block_by_hash(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetBlockByHashSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -784,22 +973,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_height_by_hash(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetHeightByHashSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -815,22 +1011,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_block_by_number(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetBlockByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -846,7 +1049,7 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut =
                                 async move { (*inner).get_state_root_by_number(request).await };
                             Box::pin(fut)
@@ -854,15 +1057,22 @@ pub mod rpc_service_server {
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetStateRootByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -878,22 +1088,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_proof_by_number(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetProofByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -911,7 +1128,7 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut =
                                 async move { (*inner).get_block_detail_by_number(request).await };
                             Box::pin(fut)
@@ -919,15 +1136,22 @@ pub mod rpc_service_server {
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetBlockDetailByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -945,22 +1169,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_transaction(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -978,22 +1209,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_system_config(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetSystemConfigSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1011,7 +1249,7 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut =
                                 async move { (*inner).get_system_config_by_number(request).await };
                             Box::pin(fut)
@@ -1019,15 +1257,22 @@ pub mod rpc_service_server {
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetSystemConfigByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1043,22 +1288,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_block_hash(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetBlockHashSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1076,7 +1328,7 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut =
                                 async move { (*inner).get_transaction_block_number(request).await };
                             Box::pin(fut)
@@ -1084,15 +1336,22 @@ pub mod rpc_service_server {
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetTransactionBlockNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1110,22 +1369,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_transaction_index(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetTransactionIndexSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1144,22 +1410,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::NodeNetInfo>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).add_node(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = AddNodeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1177,22 +1450,29 @@ pub mod rpc_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_node_status(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetNodeStatusSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1216,12 +1496,14 @@ pub mod rpc_service_server {
                 inner,
                 accept_compression_encodings: self.accept_compression_encodings,
                 send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
             }
         }
     }
     impl<T: RpcService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone())
+            Self(Arc::clone(&self.0))
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
@@ -1245,19 +1527,22 @@ pub mod consensus2_controller_service_server {
         async fn get_proposal(
             &self,
             request: tonic::Request<super::super::common::Empty>,
-        ) -> Result<tonic::Response<super::super::common::ProposalResponse>, tonic::Status>;
+        ) -> std::result::Result<
+            tonic::Response<super::super::common::ProposalResponse>,
+            tonic::Status,
+        >;
         /// when Consensus received a new proposal from other nodes, it will ask controller to check it
         /// args: proposal hash
         /// ret: ok or not
         async fn check_proposal(
             &self,
             request: tonic::Request<super::super::common::Proposal>,
-        ) -> Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::super::common::StatusCode>, tonic::Status>;
         /// after Consensus, tell controller a proposal has committed
         async fn commit_block(
             &self,
             request: tonic::Request<super::super::common::ProposalWithProof>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::super::common::ConsensusConfigurationResponse>,
             tonic::Status,
         >;
@@ -1267,6 +1552,8 @@ pub mod consensus2_controller_service_server {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
+        max_decoding_message_size: Option<usize>,
+        max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
     impl<T: Consensus2ControllerService> Consensus2ControllerServiceServer<T> {
@@ -1279,6 +1566,8 @@ pub mod consensus2_controller_service_server {
                 inner,
                 accept_compression_encodings: Default::default(),
                 send_compression_encodings: Default::default(),
+                max_decoding_message_size: None,
+                max_encoding_message_size: None,
             }
         }
         pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
@@ -1299,6 +1588,22 @@ pub mod consensus2_controller_service_server {
             self.send_compression_encodings.enable(encoding);
             self
         }
+        /// Limits the maximum size of a decoded message.
+        ///
+        /// Default: `4MB`
+        #[must_use]
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+            self.max_decoding_message_size = Some(limit);
+            self
+        }
+        /// Limits the maximum size of an encoded message.
+        ///
+        /// Default: `usize::MAX`
+        #[must_use]
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+            self.max_encoding_message_size = Some(limit);
+            self
+        }
     }
     impl<T, B> tonic::codegen::Service<http::Request<B>> for Consensus2ControllerServiceServer<T>
     where
@@ -1309,7 +1614,10 @@ pub mod consensus2_controller_service_server {
         type Response = http::Response<tonic::body::BoxBody>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(
+            &mut self,
+            _cx: &mut Context<'_>,
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -1328,22 +1636,29 @@ pub mod consensus2_controller_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).get_proposal(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetProposalSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1362,22 +1677,29 @@ pub mod consensus2_controller_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::Proposal>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).check_proposal(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = CheckProposalSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1396,22 +1718,29 @@ pub mod consensus2_controller_service_server {
                             &mut self,
                             request: tonic::Request<super::super::common::ProposalWithProof>,
                         ) -> Self::Future {
-                            let inner = self.0.clone();
+                            let inner = Arc::clone(&self.0);
                             let fut = async move { (*inner).commit_block(request).await };
                             Box::pin(fut)
                         }
                     }
                     let accept_compression_encodings = self.accept_compression_encodings;
                     let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
                         let method = CommitBlockSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
-                        let mut grpc = tonic::server::Grpc::new(codec).apply_compression_config(
-                            accept_compression_encodings,
-                            send_compression_encodings,
-                        );
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
                         let res = grpc.unary(method, req).await;
                         Ok(res)
                     };
@@ -1435,12 +1764,14 @@ pub mod consensus2_controller_service_server {
                 inner,
                 accept_compression_encodings: self.accept_compression_encodings,
                 send_compression_encodings: self.send_compression_encodings,
+                max_decoding_message_size: self.max_decoding_message_size,
+                max_encoding_message_size: self.max_encoding_message_size,
             }
         }
     }
     impl<T: Consensus2ControllerService> Clone for _Inner<T> {
         fn clone(&self) -> Self {
-            Self(self.0.clone())
+            Self(Arc::clone(&self.0))
         }
     }
     impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
