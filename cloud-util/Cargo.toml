@@ -29,6 +29,7 @@ opentelemetry_sdk = { version = "0.18", features = ["jaeger_remote_sampler"] }
 serde = { version = "1.0", features = ["derive"] }
 time = "0.3"
 chrono = "0.4"
+backtrace = "0.3"
 
 cita_cloud_proto = { path = "../cloud-proto" }
 
