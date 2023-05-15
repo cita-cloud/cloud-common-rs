@@ -124,6 +124,8 @@ pub enum StatusCodeEnum {
     StateRootCheckError = 155,
     /// / update system-config error; wrong prehash or unallowed lockid
     UpdateSystemConfigError = 156,
+    /// / not get the receipt proof
+    NoReceiptProof = 157,
     /// / Consensus from 200
     /// / check proposal proof error
     ConsensusServerNotReady = 200,
@@ -248,6 +250,7 @@ impl StatusCodeEnum {
             StatusCodeEnum::NoStateRoot => "NoStateRoot",
             StatusCodeEnum::StateRootCheckError => "StateRootCheckError",
             StatusCodeEnum::UpdateSystemConfigError => "UpdateSystemConfigError",
+            StatusCodeEnum::NoReceiptProof => "NoReceiptProof",
             StatusCodeEnum::ConsensusServerNotReady => "ConsensusServerNotReady",
             StatusCodeEnum::ProposalProofError => "ProposalProofError",
             StatusCodeEnum::CryptoServerNotReady => "CryptoServerNotReady",
@@ -339,6 +342,7 @@ impl StatusCodeEnum {
             "NoStateRoot" => Some(Self::NoStateRoot),
             "StateRootCheckError" => Some(Self::StateRootCheckError),
             "UpdateSystemConfigError" => Some(Self::UpdateSystemConfigError),
+            "NoReceiptProof" => Some(Self::NoReceiptProof),
             "ConsensusServerNotReady" => Some(Self::ConsensusServerNotReady),
             "ProposalProofError" => Some(Self::ProposalProofError),
             "CryptoServerNotReady" => Some(Self::CryptoServerNotReady),

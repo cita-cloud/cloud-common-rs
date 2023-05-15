@@ -340,6 +340,11 @@ pub trait RPCClientTrait {
     ) -> Result<common::StatusCode, tonic::Status>;
 
     async fn get_node_status(&self, e: common::Empty) -> Result<common::NodeStatus, tonic::Status>;
+
+    async fn get_cross_chain_proof(
+        &self,
+        hash: common::Hash,
+    ) -> Result<controller::CrossChainProof, tonic::Status>;
 }
 
 #[async_trait::async_trait]
@@ -364,6 +369,11 @@ pub trait EVMClientTrait {
         &self,
         request: executor::CallRequest,
     ) -> Result<evm::ByteQuota, tonic::Status>;
+
+    async fn get_receipt_proof(
+        &self,
+        request: common::Hash,
+    ) -> Result<evm::ReceiptProof, tonic::Status>;
 }
 
 #[async_trait::async_trait]
