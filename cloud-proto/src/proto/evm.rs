@@ -76,6 +76,32 @@ pub struct ByteQuota {
     #[prost(bytes = "vec", tag = "1")]
     pub bytes_quota: ::prost::alloc::vec::Vec<u8>,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ReceiptProof {
+    #[prost(bytes = "vec", tag = "1")]
+    pub receipt: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "2")]
+    pub receipt_proof: ::prost::alloc::vec::Vec<u8>,
+    #[prost(message, optional, tag = "3")]
+    pub roots_info: ::core::option::Option<RootsInfo>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RootsInfo {
+    #[prost(uint64, tag = "1")]
+    pub height: u64,
+    #[prost(bytes = "vec", tag = "2")]
+    pub state_root: ::prost::alloc::vec::Vec<u8>,
+    #[prost(bytes = "vec", tag = "3")]
+    pub receipt_root: ::prost::alloc::vec::Vec<u8>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct BlockNumber {
+    #[prost(uint64, tag = "1")]
+    pub block_number: u64,
+}
 /// Generated client implementations.
 pub mod rpc_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
@@ -263,6 +289,40 @@ pub mod rpc_service_client {
                 .insert(GrpcMethod::new("evm.RPCService", "EstimateQuota"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_receipt_proof(
+            &mut self,
+            request: impl tonic::IntoRequest<super::super::common::Hash>,
+        ) -> std::result::Result<tonic::Response<super::ReceiptProof>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetReceiptProof");
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("evm.RPCService", "GetReceiptProof"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_roots_info(
+            &mut self,
+            request: impl tonic::IntoRequest<super::BlockNumber>,
+        ) -> std::result::Result<tonic::Response<super::RootsInfo>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetRootsInfo");
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("evm.RPCService", "GetRootsInfo"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -296,6 +356,14 @@ pub mod rpc_service_server {
             &self,
             request: tonic::Request<super::super::executor::CallRequest>,
         ) -> std::result::Result<tonic::Response<super::ByteQuota>, tonic::Status>;
+        async fn get_receipt_proof(
+            &self,
+            request: tonic::Request<super::super::common::Hash>,
+        ) -> std::result::Result<tonic::Response<super::ReceiptProof>, tonic::Status>;
+        async fn get_roots_info(
+            &self,
+            request: tonic::Request<super::BlockNumber>,
+        ) -> std::result::Result<tonic::Response<super::RootsInfo>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct RpcServiceServer<T: RpcService> {
@@ -596,6 +664,84 @@ pub mod rpc_service_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = EstimateQuotaSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/evm.RPCService/GetReceiptProof" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetReceiptProofSvc<T: RpcService>(pub Arc<T>);
+                    impl<T: RpcService> tonic::server::UnaryService<super::super::common::Hash>
+                        for GetReceiptProofSvc<T>
+                    {
+                        type Response = super::ReceiptProof;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::super::common::Hash>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).get_receipt_proof(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetReceiptProofSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/evm.RPCService/GetRootsInfo" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRootsInfoSvc<T: RpcService>(pub Arc<T>);
+                    impl<T: RpcService> tonic::server::UnaryService<super::BlockNumber> for GetRootsInfoSvc<T> {
+                        type Response = super::RootsInfo;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::BlockNumber>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).get_roots_info(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetRootsInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

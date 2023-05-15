@@ -31,7 +31,7 @@ use crate::{
 use backoff::{backoff::Backoff, ExponentialBackoff};
 use futures_retry::{ErrorHandler, FutureRetry, RetryPolicy};
 use std::{fmt::Debug, future::Future, time::Duration};
-use tonic::Code;
+use tonic::{Code, Status};
 
 type Result<T, E = tonic::Status> = std::result::Result<T, E>;
 
@@ -192,6 +192,9 @@ macro_rules! retry_call {
     }}
 }
 
+use crate::common::Hash;
+use crate::controller::CrossChainProof;
+use crate::evm::ReceiptProof;
 use crate::{blockchain, common, controller, crypto, evm, executor, network, storage};
 
 #[async_trait::async_trait]
@@ -311,6 +314,13 @@ impl RPCClientTrait for RetryClient<RpcServiceClient<InterceptedSvc>> {
     async fn get_node_status(&self, e: common::Empty) -> Result<common::NodeStatus, tonic::Status> {
         retry_call!(self, get_node_status, e.clone())
     }
+
+    async fn get_cross_chain_proof(
+        &self,
+        hash: Hash,
+    ) -> std::result::Result<CrossChainProof, Status> {
+        retry_call!(self, get_cross_chain_proof, hash.clone())
+    }
 }
 
 #[async_trait::async_trait]
@@ -346,6 +356,10 @@ impl EVMClientTrait for RetryClient<EVMServiceClient<InterceptedSvc>> {
         request: executor::CallRequest,
     ) -> std::result::Result<evm::ByteQuota, tonic::Status> {
         retry_call!(self, estimate_quota, request.clone())
+    }
+
+    async fn get_receipt_proof(&self, hash: Hash) -> std::result::Result<ReceiptProof, Status> {
+        retry_call!(self, get_receipt_proof, hash.clone())
     }
 }
 
