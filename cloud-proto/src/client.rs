@@ -60,7 +60,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = Consensus2ControllerServiceClient::with_interceptor(channel, interceptor);
+        let client = Consensus2ControllerServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -73,7 +74,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = NetworkServiceClient::with_interceptor(channel, interceptor);
+        let client = NetworkServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -86,7 +88,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = NetworkMsgHandlerServiceClient::with_interceptor(channel, interceptor);
+        let client = NetworkMsgHandlerServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -99,7 +102,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = ConsensusServiceClient::with_interceptor(channel, interceptor);
+        let client = ConsensusServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -112,7 +116,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = CryptoServiceClient::with_interceptor(channel, interceptor);
+        let client = CryptoServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -125,7 +130,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = ExecutorServiceClient::with_interceptor(channel, interceptor);
+        let client = ExecutorServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -138,7 +144,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = StorageServiceClient::with_interceptor(channel, interceptor);
+        let client = StorageServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -151,7 +158,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = RpcServiceClient::with_interceptor(channel, interceptor);
+        let client = RpcServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
@@ -164,7 +172,8 @@ impl ClientOptions {
         let interceptor = ServiceCallInterceptor {
             client_name: self.client_name.clone(),
         };
-        let client = EVMServiceClient::with_interceptor(channel, interceptor);
+        let client = EVMServiceClient::with_interceptor(channel, interceptor)
+            .max_decoding_message_size(usize::MAX);
         let retry_client = RetryClient::new(client, self.retry_config.clone());
         Ok(retry_client)
     }
