@@ -1,6 +1,6 @@
 [package]
 name = "cita_cloud_proto"
-version = "6.6.5"
+version = "6.7.0"
 authors = ["Rivtower Technologies <contact@rivtower.com>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -17,8 +17,8 @@ futures-retry = "0.6"
 backoff = "0.4"
 async-trait = "0.1"
 tracing = "0.1"
-tracing-opentelemetry = "0.18"
-opentelemetry = "0.18"
+tracing-opentelemetry = "0.19"
+opentelemetry = "0.19"
 
 [build-dependencies]
 tonic-build = { version = "0.9", optional = true }
