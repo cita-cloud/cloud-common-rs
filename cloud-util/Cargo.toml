@@ -1,6 +1,6 @@
 [package]
 name = "cloud-util"
-version = "0.6.2"
+version = "0.7.0"
 authors = ["ypf <yuitta@163.com>", "Rivtower Technologies <contact@rivtower.com>"]
 edition = "2021"
 license = "Apache-2.0"
@@ -20,12 +20,12 @@ prometheus = "0.13"
 lazy_static = "1.4"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "local-time"] }
-tracing-opentelemetry = "0.18"
+tracing-opentelemetry = "0.19"
 tracing-appender = "0.2"
-opentelemetry = { version = "0.18", features = ["rt-tokio"] }
-opentelemetry-jaeger = { version = "0.17", features = ["rt-tokio"] }
-opentelemetry-http = { version = "0.7", features = ["hyper", "tokio"] }
-opentelemetry_sdk = { version = "0.18", features = ["jaeger_remote_sampler"] }
+opentelemetry = { version = "0.19", features = ["rt-tokio"] }
+opentelemetry-jaeger = { version = "0.18", features = ["rt-tokio"] }
+opentelemetry-http = { version = "0.8", features = ["hyper", "tokio"] }
+opentelemetry_sdk = { version = "0.19", features = ["jaeger_remote_sampler"] }
 serde = { version = "1.0", features = ["derive"] }
 time = "0.3"
 chrono = "0.4"
@@ -41,7 +41,7 @@ signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
-criterion = "0.4"
+criterion = "0.5"
 
 [[bench]]
 name = "wal"
