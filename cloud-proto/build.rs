@@ -16,26 +16,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(feature = "tonic-build")]
     {
         println!("cargo:rerun-if-changed=protos");
+        tonic_build::configure().out_dir("src/proto").compile(
+            &[
+                "blockchain.proto",
+                "common.proto",
+                "consensus.proto",
+                "network.proto",
+                "storage.proto",
+                "crypto.proto",
+                "health_check.proto",
+                "status_code.proto",
+            ],
+            &["protos/protos"],
+        )?;
         tonic_build::configure()
-            .build_client(true)
-            .build_server(true)
             .out_dir("src/proto")
-            .compile(
-                &[
-                    "controller.proto",
-                    "blockchain.proto",
-                    "common.proto",
-                    "consensus.proto",
-                    "executor.proto",
-                    "network.proto",
-                    "storage.proto",
-                    "crypto.proto",
-                    "vm/evm.proto",
-                    "health_check.proto",
-                    "status_code.proto",
-                ],
-                &["protos/protos"],
-            )?;
+            .file_descriptor_set_path("descriptor/controller.bin")
+            .compile(&["controller.proto"], &["protos/protos"])?;
+        tonic_build::configure()
+            .out_dir("src/proto")
+            .file_descriptor_set_path("descriptor/executor.bin")
+            .compile(&["executor.proto", "vm/evm.proto"], &["protos/protos"])?;
     }
     Ok(())
 }
