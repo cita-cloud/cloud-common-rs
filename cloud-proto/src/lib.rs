@@ -27,3 +27,6 @@ pub use proto::{
     blockchain, common, consensus, controller, crypto, evm, executor, health_check, network,
     status_code, storage,
 };
+
+pub const CONTROLLER_DESCRIPTOR_SET: &[u8] = include_bytes!("reflect/controller.bin");
+pub const EXECUTOR_DESCRIPTOR_SET: &[u8] = include_bytes!("reflect/executor.bin");

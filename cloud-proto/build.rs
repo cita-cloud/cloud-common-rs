@@ -31,11 +31,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
         tonic_build::configure()
             .out_dir("src/proto")
-            .file_descriptor_set_path("descriptor/controller.bin")
+            .file_descriptor_set_path("src/reflect/controller.bin")
             .compile(&["controller.proto"], &["protos/protos"])?;
         tonic_build::configure()
             .out_dir("src/proto")
-            .file_descriptor_set_path("descriptor/executor.bin")
+            .file_descriptor_set_path("src/reflect/executor.bin")
             .compile(&["executor.proto", "vm/evm.proto"], &["protos/protos"])?;
     }
     Ok(())
