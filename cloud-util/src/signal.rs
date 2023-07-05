@@ -13,18 +13,28 @@
 // limitations under the License.
 
 use futures::stream::StreamExt;
-use signal_hook::{consts::signal::*, low_level::exit};
+use signal_hook::consts::signal::*;
 use signal_hook_tokio::Signals;
 
-pub async fn handle_signals() {
-    let mut signals = Signals::new([SIGTERM]).unwrap();
-    while let Some(signal) = signals.next().await {
-        match signal {
-            SIGTERM => {
-                info!("exit by signal: {signal}");
-                exit(0);
+pub fn handle_signals() -> flume::Receiver<()> {
+    let (tx, rx) = flume::bounded(0);
+    tokio::spawn(async move {
+        let mut signals = Signals::new([SIGTERM]).unwrap();
+        while let Some(signal) = signals.next().await {
+            match signal {
+                SIGTERM => {
+                    info!("exit by signal: {signal}");
+                    drop(tx);
+                    break;
+                }
+                _ => warn!("Received signal: {signal}"),
             }
-            _ => warn!("Received signal: {signal}"),
         }
-    }
+    });
+    rx
+}
+
+pub async fn grpc_serve_listen_term(rx: flume::Receiver<()>) {
+    let _ = rx.recv_async().await;
+    info!("grpc server exit!");
 }
