@@ -25,6 +25,8 @@ pub fn graceful_shutdown() -> flume::Receiver<()> {
     let (tx, rx) = flume::bounded(0);
     let (tx_exit, rx_exit) = flume::bounded(1);
     set_panic_handler(tx_exit.clone());
+
+    #[cfg(not(windows))]
     tokio::spawn(handle_signals(tx_exit));
 
     tokio::spawn(async move {
