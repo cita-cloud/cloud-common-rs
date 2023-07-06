@@ -14,6 +14,7 @@
 
 pub mod common;
 pub mod crypto;
+pub mod graceful_shutdown;
 pub mod metrics;
 pub mod network;
 pub mod panic_hook;

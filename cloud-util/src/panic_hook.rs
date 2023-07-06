@@ -13,38 +13,35 @@
 // limitations under the License.
 
 use backtrace::Backtrace;
-use std::{
-    panic::{self, PanicInfo},
-    process, thread,
-};
+use std::{panic, thread};
+
+use crate::graceful_shutdown::ExitType;
 
 /// Set the panic hook
-pub fn set_panic_handler() {
-    panic::set_hook(Box::new(panic_hook));
-}
-
-fn panic_hook(info: &PanicInfo) {
-    let location = info.location();
-    let file = location.as_ref().map(|l| l.file()).unwrap_or("<unknown>");
-    let line = location.as_ref().map(|l| l.line()).unwrap_or(0);
-    let msg = match info.payload().downcast_ref::<&'static str>() {
-        Some(s) => *s,
-        None => match info.payload().downcast_ref::<String>() {
-            Some(s) => &s[..],
-            None => "Box<Any>",
-        },
-    };
-    let thread = thread::current();
-    let name = thread.name().unwrap_or("<unnamed>");
-    let backtrace = Backtrace::new();
-    let error = format!(
-        "\n============================\n\
-         {backtrace:?}\n\n\
-         position:\n\
-         Thread {name} panicked at {msg}, {file}:{line}\n\
-         ============================\n\
-         "
-    );
-    eprintln!("{}", error);
-    process::exit(1);
+pub(crate) fn set_panic_handler(tx: flume::Sender<ExitType>) {
+    panic::set_hook(Box::new(move |info| {
+        let location = info.location();
+        let file = location.as_ref().map(|l| l.file()).unwrap_or("<unknown>");
+        let line = location.as_ref().map(|l| l.line()).unwrap_or(0);
+        let msg = match info.payload().downcast_ref::<&'static str>() {
+            Some(s) => *s,
+            None => match info.payload().downcast_ref::<String>() {
+                Some(s) => &s[..],
+                None => "Box<Any>",
+            },
+        };
+        let thread = thread::current();
+        let name = thread.name().unwrap_or("<unnamed>");
+        let backtrace = Backtrace::new();
+        let error = format!(
+            "\n============================\n\
+            {backtrace:?}\n\n\
+            position:\n\
+            Thread {name} panicked at {msg}, {file}:{line}\n\
+            ============================\n\
+            "
+        );
+        eprintln!("{}", error);
+        let _ = tx.send(ExitType::Panic);
+    }));
 }
