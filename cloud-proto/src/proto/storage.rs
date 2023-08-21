@@ -41,7 +41,8 @@ pub enum Regions {
     CompactBlock = 10,
     FullBlock = 11,
     AllBlockData = 12,
-    Button = 13,
+    TransactionsPool = 13,
+    Button = 14,
 }
 impl Regions {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -63,6 +64,7 @@ impl Regions {
             Regions::CompactBlock => "COMPACT_BLOCK",
             Regions::FullBlock => "FULL_BLOCK",
             Regions::AllBlockData => "All_BLOCK_DATA",
+            Regions::TransactionsPool => "TRANSACTIONS_POOL",
             Regions::Button => "BUTTON",
         }
     }
@@ -82,6 +84,7 @@ impl Regions {
             "COMPACT_BLOCK" => Some(Self::CompactBlock),
             "FULL_BLOCK" => Some(Self::FullBlock),
             "All_BLOCK_DATA" => Some(Self::AllBlockData),
+            "TRANSACTIONS_POOL" => Some(Self::TransactionsPool),
             "BUTTON" => Some(Self::Button),
             _ => None,
         }
