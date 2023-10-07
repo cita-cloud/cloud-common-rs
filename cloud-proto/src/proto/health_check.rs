@@ -245,7 +245,7 @@ pub mod health_server {
                             request: tonic::Request<super::HealthCheckRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).check(request).await };
+                            let fut = async move { <T as Health>::check(&inner, request).await };
                             Box::pin(fut)
                         }
                     }

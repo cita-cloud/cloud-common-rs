@@ -454,8 +454,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut =
-                                async move { (*inner).get_transaction_receipt(request).await };
+                            let fut = async move {
+                                <T as RpcService>::get_transaction_receipt(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -493,7 +494,8 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Address>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_code(request).await };
+                            let fut =
+                                async move { <T as RpcService>::get_code(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -533,7 +535,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Address>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_balance(request).await };
+                            let fut = async move {
+                                <T as RpcService>::get_balance(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -573,7 +577,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Address>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_transaction_count(request).await };
+                            let fut = async move {
+                                <T as RpcService>::get_transaction_count(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -611,7 +617,8 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Address>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_abi(request).await };
+                            let fut =
+                                async move { <T as RpcService>::get_abi(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -652,7 +659,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::executor::CallRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).estimate_quota(request).await };
+                            let fut = async move {
+                                <T as RpcService>::estimate_quota(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -692,7 +701,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::super::common::Hash>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_receipt_proof(request).await };
+                            let fut = async move {
+                                <T as RpcService>::get_receipt_proof(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -730,7 +741,9 @@ pub mod rpc_service_server {
                             request: tonic::Request<super::BlockNumber>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_roots_info(request).await };
+                            let fut = async move {
+                                <T as RpcService>::get_roots_info(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }

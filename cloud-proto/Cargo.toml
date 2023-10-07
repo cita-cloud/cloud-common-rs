@@ -8,17 +8,17 @@ description = "cita-cloud proto library"
 
 
 [dependencies]
-tonic = "0.9"
-prost = "0.11"
-tokio = { version = "1.32", features = ["full"] }
+tonic = "0.10"
+prost = "0.12"
+tokio = { version = "1.32", default-features = false, features = ["macros"] }
 thiserror = "1.0"
 http = "0.2"
 futures-retry = "0.6"
 backoff = "0.4"
 async-trait = "0.1"
 tracing = "0.1"
-tracing-opentelemetry = "0.20"
+tracing-opentelemetry = "0.21"
 opentelemetry = "0.20"
 
 [build-dependencies]
-tonic-build = { version = "0.9", optional = true }
+tonic-build = { version = "0.10", optional = true }

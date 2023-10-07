@@ -385,7 +385,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_crypto_info(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::get_crypto_info(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -423,7 +425,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::HashDataRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).hash_data(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::hash_data(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -463,7 +467,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::VerifyDataHashRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).verify_data_hash(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::verify_data_hash(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -503,7 +509,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::SignMessageRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).sign_message(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::sign_message(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -544,7 +552,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::RecoverSignatureRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).recover_signature(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::recover_signature(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -585,7 +595,9 @@ pub mod crypto_service_server {
                             request: tonic::Request<super::super::blockchain::RawTransactions>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).check_transactions(request).await };
+                            let fut = async move {
+                                <T as CryptoService>::check_transactions(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }

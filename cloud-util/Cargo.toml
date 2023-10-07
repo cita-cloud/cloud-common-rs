@@ -9,10 +9,10 @@ description = "cita-cloud utility library"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prost = "0.11"
-tokio = "1.32"
-toml = "0.7"
-tonic = "0.9"
+prost = "0.12"
+tokio = { version = "1.32", default-features = false, features = ["fs", "rt-multi-thread"] }
+toml = "0.8"
+tonic = "0.10"
 tower = "0.4"
 futures = "0.3"
 hyper = { version = "0.14", features = ["full"] }
@@ -20,7 +20,7 @@ prometheus = "0.13"
 lazy_static = "1.4"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "local-time"] }
-tracing-opentelemetry = "0.20"
+tracing-opentelemetry = "0.21"
 tracing-appender = "0.2"
 opentelemetry = { version = "0.20", features = ["rt-tokio"] }
 opentelemetry-jaeger = { version = "0.19", features = ["rt-tokio"] }
