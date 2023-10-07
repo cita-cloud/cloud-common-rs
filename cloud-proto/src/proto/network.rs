@@ -473,7 +473,9 @@ pub mod network_service_server {
                             request: tonic::Request<super::NetworkMsg>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).send_msg(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::send_msg(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -511,7 +513,9 @@ pub mod network_service_server {
                             request: tonic::Request<super::NetworkMsg>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).broadcast(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::broadcast(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -551,7 +555,9 @@ pub mod network_service_server {
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_network_status(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::get_network_status(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -591,8 +597,10 @@ pub mod network_service_server {
                             request: tonic::Request<super::RegisterInfo>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut =
-                                async move { (*inner).register_network_msg_handler(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::register_network_msg_handler(&inner, request)
+                                    .await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -633,7 +641,9 @@ pub mod network_service_server {
                             request: tonic::Request<super::super::common::NodeNetInfo>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).add_node(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::add_node(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -673,7 +683,9 @@ pub mod network_service_server {
                             request: tonic::Request<super::super::common::Empty>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_peers_net_info(request).await };
+                            let fut = async move {
+                                <T as NetworkService>::get_peers_net_info(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -839,7 +851,12 @@ pub mod network_msg_handler_service_server {
                             request: tonic::Request<super::NetworkMsg>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).process_network_msg(request).await };
+                            let fut = async move {
+                                <T as NetworkMsgHandlerService>::process_network_msg(
+                                    &inner, request,
+                                )
+                                .await
+                            };
                             Box::pin(fut)
                         }
                     }

@@ -251,7 +251,8 @@ pub mod executor_service_server {
                             request: tonic::Request<super::super::blockchain::Block>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).exec(request).await };
+                            let fut =
+                                async move { <T as ExecutorService>::exec(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -289,7 +290,8 @@ pub mod executor_service_server {
                             request: tonic::Request<super::CallRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).call(request).await };
+                            let fut =
+                                async move { <T as ExecutorService>::call(&inner, request).await };
                             Box::pin(fut)
                         }
                     }

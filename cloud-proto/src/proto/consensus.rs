@@ -232,7 +232,9 @@ pub mod consensus_service_server {
                             request: tonic::Request<super::super::common::ConsensusConfiguration>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).reconfigure(request).await };
+                            let fut = async move {
+                                <T as ConsensusService>::reconfigure(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -273,7 +275,9 @@ pub mod consensus_service_server {
                             request: tonic::Request<super::super::common::ProposalWithProof>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).check_block(request).await };
+                            let fut = async move {
+                                <T as ConsensusService>::check_block(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }

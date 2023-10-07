@@ -342,7 +342,8 @@ pub mod storage_service_server {
                             request: tonic::Request<super::Content>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).store(request).await };
+                            let fut =
+                                async move { <T as StorageService>::store(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -377,7 +378,8 @@ pub mod storage_service_server {
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(&mut self, request: tonic::Request<super::ExtKey>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).load(request).await };
+                            let fut =
+                                async move { <T as StorageService>::load(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -412,7 +414,8 @@ pub mod storage_service_server {
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(&mut self, request: tonic::Request<super::ExtKey>) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).delete(request).await };
+                            let fut =
+                                async move { <T as StorageService>::delete(&inner, request).await };
                             Box::pin(fut)
                         }
                     }

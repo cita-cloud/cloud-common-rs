@@ -46,9 +46,7 @@ impl ::std::error::Error for StatusCodeEnum {}
 
 impl From<StatusCode> for StatusCodeEnum {
     fn from(status: StatusCode) -> Self {
-        StatusCodeEnum::from_i32(status.code as i32)
-            .ok_or(StatusCodeEnum::NoneStatusCode)
-            .unwrap()
+        StatusCodeEnum::try_from(status.code as i32).unwrap_or(StatusCodeEnum::NoneStatusCode)
     }
 }
 
@@ -61,9 +59,7 @@ impl Into<StatusCode> for StatusCodeEnum {
 
 impl From<u32> for StatusCodeEnum {
     fn from(status: u32) -> Self {
-        StatusCodeEnum::from_i32(status as i32)
-            .ok_or(StatusCodeEnum::NoneStatusCode)
-            .unwrap()
+        StatusCodeEnum::try_from(status as i32).unwrap_or(StatusCodeEnum::NoneStatusCode)
     }
 }
 
