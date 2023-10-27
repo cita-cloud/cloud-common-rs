@@ -332,23 +332,26 @@ impl EVMClientTrait for RetryClient<EVMServiceClient<InterceptedSvc>> {
         retry_call!(self, get_transaction_receipt, hash.clone())
     }
 
-    async fn get_code(&self, address: common::Address) -> Result<evm::ByteCode, tonic::Status> {
-        retry_call!(self, get_code, address.clone())
+    async fn get_code(&self, request: evm::GetCodeRequest) -> Result<evm::ByteCode, tonic::Status> {
+        retry_call!(self, get_code, request.clone())
     }
 
-    async fn get_balance(&self, address: common::Address) -> Result<evm::Balance, tonic::Status> {
-        retry_call!(self, get_balance, address.clone())
+    async fn get_balance(
+        &self,
+        request: evm::GetBalanceRequest,
+    ) -> Result<evm::Balance, tonic::Status> {
+        retry_call!(self, get_balance, request.clone())
     }
 
     async fn get_transaction_count(
         &self,
-        address: common::Address,
+        request: evm::GetTransactionCountRequest,
     ) -> Result<evm::Nonce, tonic::Status> {
-        retry_call!(self, get_transaction_count, address.clone())
+        retry_call!(self, get_transaction_count, request.clone())
     }
 
-    async fn get_abi(&self, address: common::Address) -> Result<evm::ByteAbi, tonic::Status> {
-        retry_call!(self, get_abi, address.clone())
+    async fn get_abi(&self, request: evm::GetAbiRequest) -> Result<evm::ByteAbi, tonic::Status> {
+        retry_call!(self, get_abi, request.clone())
     }
 
     async fn estimate_quota(
@@ -360,6 +363,13 @@ impl EVMClientTrait for RetryClient<EVMServiceClient<InterceptedSvc>> {
 
     async fn get_receipt_proof(&self, hash: Hash) -> std::result::Result<ReceiptProof, Status> {
         retry_call!(self, get_receipt_proof, hash.clone())
+    }
+
+    async fn get_storage_at(
+        &self,
+        request: evm::GetStorageAtRequest,
+    ) -> Result<common::Hash, tonic::Status> {
+        retry_call!(self, get_storage_at, request.clone())
     }
 }
 

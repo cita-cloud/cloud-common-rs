@@ -363,16 +363,19 @@ pub trait EVMClientTrait {
         hash: common::Hash,
     ) -> Result<evm::Receipt, tonic::Status>;
 
-    async fn get_code(&self, address: common::Address) -> Result<evm::ByteCode, tonic::Status>;
+    async fn get_code(&self, request: evm::GetCodeRequest) -> Result<evm::ByteCode, tonic::Status>;
 
-    async fn get_balance(&self, address: common::Address) -> Result<evm::Balance, tonic::Status>;
+    async fn get_balance(
+        &self,
+        request: evm::GetBalanceRequest,
+    ) -> Result<evm::Balance, tonic::Status>;
 
     async fn get_transaction_count(
         &self,
-        address: common::Address,
+        request: evm::GetTransactionCountRequest,
     ) -> Result<evm::Nonce, tonic::Status>;
 
-    async fn get_abi(&self, address: common::Address) -> Result<evm::ByteAbi, tonic::Status>;
+    async fn get_abi(&self, request: evm::GetAbiRequest) -> Result<evm::ByteAbi, tonic::Status>;
 
     async fn estimate_quota(
         &self,
@@ -383,6 +386,11 @@ pub trait EVMClientTrait {
         &self,
         request: common::Hash,
     ) -> Result<evm::ReceiptProof, tonic::Status>;
+
+    async fn get_storage_at(
+        &self,
+        request: evm::GetStorageAtRequest,
+    ) -> Result<common::Hash, tonic::Status>;
 }
 
 #[async_trait::async_trait]
