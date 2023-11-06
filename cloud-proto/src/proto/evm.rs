@@ -99,8 +99,63 @@ pub struct RootsInfo {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct BlockNumber {
-    #[prost(uint64, tag = "1")]
-    pub block_number: u64,
+    #[prost(oneof = "block_number::Lable", tags = "1, 2, 3")]
+    pub lable: ::core::option::Option<block_number::Lable>,
+}
+/// Nested message and enum types in `BlockNumber`.
+pub mod block_number {
+    #[allow(clippy::derive_partial_eq_without_eq)]
+    #[derive(Clone, PartialEq, ::prost::Oneof)]
+    pub enum Lable {
+        #[prost(uint64, tag = "1")]
+        Height(u64),
+        #[prost(string, tag = "2")]
+        Tag(::prost::alloc::string::String),
+        #[prost(bytes, tag = "3")]
+        Hash(::prost::alloc::vec::Vec<u8>),
+    }
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCodeRequest {
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<super::common::Address>,
+    #[prost(message, optional, tag = "2")]
+    pub block_number: ::core::option::Option<BlockNumber>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetBalanceRequest {
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<super::common::Address>,
+    #[prost(message, optional, tag = "2")]
+    pub block_number: ::core::option::Option<BlockNumber>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTransactionCountRequest {
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<super::common::Address>,
+    #[prost(message, optional, tag = "2")]
+    pub block_number: ::core::option::Option<BlockNumber>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetAbiRequest {
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<super::common::Address>,
+    #[prost(message, optional, tag = "2")]
+    pub block_number: ::core::option::Option<BlockNumber>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetStorageAtRequest {
+    #[prost(message, optional, tag = "1")]
+    pub address: ::core::option::Option<super::common::Address>,
+    #[prost(message, optional, tag = "2")]
+    pub position: ::core::option::Option<super::common::Hash>,
+    #[prost(message, optional, tag = "3")]
+    pub block_number: ::core::option::Option<BlockNumber>,
 }
 /// Generated client implementations.
 pub mod rpc_service_client {
@@ -206,7 +261,7 @@ pub mod rpc_service_client {
         }
         pub async fn get_code(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::common::Address>,
+            request: impl tonic::IntoRequest<super::GetCodeRequest>,
         ) -> std::result::Result<tonic::Response<super::ByteCode>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
@@ -223,7 +278,7 @@ pub mod rpc_service_client {
         }
         pub async fn get_balance(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::common::Address>,
+            request: impl tonic::IntoRequest<super::GetBalanceRequest>,
         ) -> std::result::Result<tonic::Response<super::Balance>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
@@ -240,7 +295,7 @@ pub mod rpc_service_client {
         }
         pub async fn get_transaction_count(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::common::Address>,
+            request: impl tonic::IntoRequest<super::GetTransactionCountRequest>,
         ) -> std::result::Result<tonic::Response<super::Nonce>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
@@ -257,7 +312,7 @@ pub mod rpc_service_client {
         }
         pub async fn get_abi(
             &mut self,
-            request: impl tonic::IntoRequest<super::super::common::Address>,
+            request: impl tonic::IntoRequest<super::GetAbiRequest>,
         ) -> std::result::Result<tonic::Response<super::ByteAbi>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::new(
@@ -323,6 +378,24 @@ pub mod rpc_service_client {
                 .insert(GrpcMethod::new("evm.RPCService", "GetRootsInfo"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_storage_at(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetStorageAtRequest>,
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::new(
+                    tonic::Code::Unknown,
+                    format!("Service was not ready: {}", e.into()),
+                )
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetStorageAt");
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("evm.RPCService", "GetStorageAt"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -338,19 +411,19 @@ pub mod rpc_service_server {
         ) -> std::result::Result<tonic::Response<super::Receipt>, tonic::Status>;
         async fn get_code(
             &self,
-            request: tonic::Request<super::super::common::Address>,
+            request: tonic::Request<super::GetCodeRequest>,
         ) -> std::result::Result<tonic::Response<super::ByteCode>, tonic::Status>;
         async fn get_balance(
             &self,
-            request: tonic::Request<super::super::common::Address>,
+            request: tonic::Request<super::GetBalanceRequest>,
         ) -> std::result::Result<tonic::Response<super::Balance>, tonic::Status>;
         async fn get_transaction_count(
             &self,
-            request: tonic::Request<super::super::common::Address>,
+            request: tonic::Request<super::GetTransactionCountRequest>,
         ) -> std::result::Result<tonic::Response<super::Nonce>, tonic::Status>;
         async fn get_abi(
             &self,
-            request: tonic::Request<super::super::common::Address>,
+            request: tonic::Request<super::GetAbiRequest>,
         ) -> std::result::Result<tonic::Response<super::ByteAbi>, tonic::Status>;
         async fn estimate_quota(
             &self,
@@ -364,6 +437,10 @@ pub mod rpc_service_server {
             &self,
             request: tonic::Request<super::BlockNumber>,
         ) -> std::result::Result<tonic::Response<super::RootsInfo>, tonic::Status>;
+        async fn get_storage_at(
+            &self,
+            request: tonic::Request<super::GetStorageAtRequest>,
+        ) -> std::result::Result<tonic::Response<super::super::common::Hash>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct RpcServiceServer<T: RpcService> {
@@ -486,12 +563,12 @@ pub mod rpc_service_server {
                 "/evm.RPCService/GetCode" => {
                     #[allow(non_camel_case_types)]
                     struct GetCodeSvc<T: RpcService>(pub Arc<T>);
-                    impl<T: RpcService> tonic::server::UnaryService<super::super::common::Address> for GetCodeSvc<T> {
+                    impl<T: RpcService> tonic::server::UnaryService<super::GetCodeRequest> for GetCodeSvc<T> {
                         type Response = super::ByteCode;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::Address>,
+                            request: tonic::Request<super::GetCodeRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut =
@@ -525,14 +602,12 @@ pub mod rpc_service_server {
                 "/evm.RPCService/GetBalance" => {
                     #[allow(non_camel_case_types)]
                     struct GetBalanceSvc<T: RpcService>(pub Arc<T>);
-                    impl<T: RpcService> tonic::server::UnaryService<super::super::common::Address>
-                        for GetBalanceSvc<T>
-                    {
+                    impl<T: RpcService> tonic::server::UnaryService<super::GetBalanceRequest> for GetBalanceSvc<T> {
                         type Response = super::Balance;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::Address>,
+                            request: tonic::Request<super::GetBalanceRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
@@ -567,14 +642,15 @@ pub mod rpc_service_server {
                 "/evm.RPCService/GetTransactionCount" => {
                     #[allow(non_camel_case_types)]
                     struct GetTransactionCountSvc<T: RpcService>(pub Arc<T>);
-                    impl<T: RpcService> tonic::server::UnaryService<super::super::common::Address>
+                    impl<T: RpcService>
+                        tonic::server::UnaryService<super::GetTransactionCountRequest>
                         for GetTransactionCountSvc<T>
                     {
                         type Response = super::Nonce;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::Address>,
+                            request: tonic::Request<super::GetTransactionCountRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
@@ -609,12 +685,12 @@ pub mod rpc_service_server {
                 "/evm.RPCService/GetAbi" => {
                     #[allow(non_camel_case_types)]
                     struct GetAbiSvc<T: RpcService>(pub Arc<T>);
-                    impl<T: RpcService> tonic::server::UnaryService<super::super::common::Address> for GetAbiSvc<T> {
+                    impl<T: RpcService> tonic::server::UnaryService<super::GetAbiRequest> for GetAbiSvc<T> {
                         type Response = super::ByteAbi;
                         type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::super::common::Address>,
+                            request: tonic::Request<super::GetAbiRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut =
@@ -755,6 +831,46 @@ pub mod rpc_service_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetRootsInfoSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/evm.RPCService/GetStorageAt" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetStorageAtSvc<T: RpcService>(pub Arc<T>);
+                    impl<T: RpcService> tonic::server::UnaryService<super::GetStorageAtRequest> for GetStorageAtSvc<T> {
+                        type Response = super::super::common::Hash;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetStorageAtRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as RpcService>::get_storage_at(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetStorageAtSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
