@@ -136,4 +136,6 @@ pub struct NodeStatus {
     pub is_danger: bool,
     #[prost(uint64, tag = "7")]
     pub init_block_number: u64,
+    #[prost(uint64, tag = "8")]
+    pub waiting_block: u64,
 }

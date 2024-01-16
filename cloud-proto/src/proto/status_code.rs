@@ -155,8 +155,6 @@ pub enum StatusCodeEnum {
     DialNodeFail = 404,
     /// add an existed peer
     AddExistedPeer = 405,
-    /// too many requests
-    TooManyRequests = 406,
     /// / executor from 500
     /// / Executor server not ready
     ExecuteServerNotReady = 500,
@@ -266,7 +264,6 @@ impl StatusCodeEnum {
             StatusCodeEnum::MultiAddrParseError => "MultiAddrParseError",
             StatusCodeEnum::DialNodeFail => "DialNodeFail",
             StatusCodeEnum::AddExistedPeer => "AddExistedPeer",
-            StatusCodeEnum::TooManyRequests => "TooManyRequests",
             StatusCodeEnum::ExecuteServerNotReady => "ExecuteServerNotReady",
             StatusCodeEnum::InternalChannelDisconnected => "InternalChannelDisconnected",
             StatusCodeEnum::ReenterBlock => "ReenterBlock",
@@ -359,7 +356,6 @@ impl StatusCodeEnum {
             "MultiAddrParseError" => Some(Self::MultiAddrParseError),
             "DialNodeFail" => Some(Self::DialNodeFail),
             "AddExistedPeer" => Some(Self::AddExistedPeer),
-            "TooManyRequests" => Some(Self::TooManyRequests),
             "ExecuteServerNotReady" => Some(Self::ExecuteServerNotReady),
             "InternalChannelDisconnected" => Some(Self::InternalChannelDisconnected),
             "ReenterBlock" => Some(Self::ReenterBlock),
