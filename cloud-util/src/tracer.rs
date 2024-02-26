@@ -13,13 +13,9 @@
 // limitations under the License.
 
 use chrono::{Local, Offset};
-use opentelemetry::{
-    global,
-    propagation::Extractor,
-    sdk::{self, propagation::TraceContextPropagator, runtime, trace::Sampler, Resource},
-    KeyValue,
-};
+use opentelemetry::{global, propagation::Extractor, KeyValue};
 use opentelemetry_http::hyper::HyperClient;
+use opentelemetry_sdk::{propagation::TraceContextPropagator, runtime, trace::Sampler, Resource};
 use serde::{Deserialize, Serialize};
 use std::{str::FromStr, time::Duration};
 use time::{format_description::well_known, UtcOffset};
@@ -81,7 +77,7 @@ pub fn init_tracer(
             opentelemetry_jaeger::new_agent_pipeline()
                 .with_service_name(&log_config.service_name)
                 .with_trace_config(
-                    sdk::trace::Config::default()
+                    opentelemetry_sdk::trace::Config::default()
                         .with_sampler(
                             Sampler::jaeger_remote(
                                 runtime::Tokio,
@@ -99,7 +95,7 @@ pub fn init_tracer(
                         .with_resource(Resource::new(vec![KeyValue::new("domain", domain)])),
                 )
                 .with_endpoint(agent_endpoint)
-                .install_batch(opentelemetry::runtime::Tokio)?,
+                .install_batch(runtime::Tokio)?,
         );
     }
 
