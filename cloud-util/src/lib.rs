@@ -22,7 +22,6 @@ pub mod panic_hook;
 pub mod signal;
 pub mod storage;
 pub mod tracer;
-pub mod wal;
 
 #[macro_use]
 extern crate tracing as logger;
