@@ -32,8 +32,8 @@ pub fn graceful_shutdown() -> flume::Receiver<()> {
     tokio::spawn(async move {
         if let Ok(exit_type) = rx_exit.recv_async().await {
             match exit_type {
-                ExitType::Signal(_) => info!("exit by: {exit_type:?}"),
-                ExitType::Panic => eprintln!("exit by: {exit_type:?}"),
+                ExitType::Signal(signal_n) => info!("exit by: signal {}!", signal_n),
+                ExitType::Panic => eprintln!("exit by: panic!"),
             }
             drop(tx);
         }
