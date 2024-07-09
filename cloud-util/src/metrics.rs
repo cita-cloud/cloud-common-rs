@@ -254,12 +254,14 @@ where
 pub async fn run_metrics_exporter(
     port: u16,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let app = Router::new().route("/metrics", get(exporter));
+    let app = Router::new()
+        .route("/metrics", get(exporter))
+        .fallback(handler_404);
     let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
         .await
         .unwrap();
     axum::serve(listener, app).await?;
-    info!("exporting metrics to http://127.0.0.1:{}/metrics", port);
+    info!("exporting metrics to http://0.0.0.0:{}/metrics", port);
 
     Ok(())
 }
@@ -271,4 +273,20 @@ async fn exporter() -> impl IntoResponse {
     let _ = encoder.encode(&metric_families, &mut buffer);
 
     (StatusCode::OK, String::from_utf8(buffer).unwrap())
+}
+
+async fn handler_404() -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        "
+default:\n
+/60000/metrics for network\n
+/60001/metrics for consensus\n
+/60002/metrics for executor\n
+/60003/metrics for storage\n
+/60004/metrics for controller\n
+/60005/metrics for crypto\n
+        "
+        .to_string(),
+    )
 }
