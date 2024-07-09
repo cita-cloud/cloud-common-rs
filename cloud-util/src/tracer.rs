@@ -14,13 +14,17 @@
 
 use chrono::{Local, Offset};
 use opentelemetry::{global, propagation::Extractor, KeyValue};
-use opentelemetry_http::hyper::HyperClient;
-use opentelemetry_sdk::{propagation::TraceContextPropagator, runtime, trace::Sampler, Resource};
+use opentelemetry_sdk::{
+    propagation::TraceContextPropagator,
+    runtime,
+    trace::{BatchConfig, Sampler},
+    Resource,
+};
 use serde::{Deserialize, Serialize};
-use std::{str::FromStr, time::Duration};
+use std::str::FromStr;
 use time::{format_description::well_known, UtcOffset};
 use tonic::Request;
-use tracing_opentelemetry::OpenTelemetrySpanExt;
+use tracing_opentelemetry::{OpenTelemetryLayer, OpenTelemetrySpanExt};
 use tracing_subscriber::{fmt::format, fmt::time::OffsetTime, prelude::*, EnvFilter};
 
 struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
@@ -74,17 +78,14 @@ pub fn init_tracer(
     if let Some(agent_endpoint) = &log_config.agent_endpoint {
         global::set_text_map_propagator(TraceContextPropagator::new());
         agent = Some(
-            opentelemetry_jaeger::new_agent_pipeline()
-                .with_service_name(&log_config.service_name)
+            opentelemetry_otlp::new_pipeline()
+                .tracing()
                 .with_trace_config(
                     opentelemetry_sdk::trace::Config::default()
                         .with_sampler(
                             Sampler::jaeger_remote(
                                 runtime::Tokio,
-                                HyperClient::new_with_timeout(
-                                    hyper::Client::new(),
-                                    Duration::from_secs(1),
-                                ),
+                                reqwest::Client::new(),
                                 Sampler::AlwaysOff,
                                 &log_config.service_name,
                             )
@@ -94,7 +95,8 @@ pub fn init_tracer(
                         )
                         .with_resource(Resource::new(vec![KeyValue::new("domain", domain)])),
                 )
-                .with_endpoint(agent_endpoint)
+                .with_batch_config(BatchConfig::default())
+                .with_exporter(opentelemetry_otlp::new_exporter().tonic())
                 .install_batch(runtime::Tokio)?,
         );
     }
@@ -126,7 +128,7 @@ pub fn init_tracer(
         if let Some(stdout) = stdout {
             tracing_subscriber::registry()
                 .with(EnvFilter::new(&log_config.filter))
-                .with(tracing_opentelemetry::layer().with_tracer(agent))
+                .with(OpenTelemetryLayer::new(agent))
                 .with(
                     tracing_subscriber::fmt::layer()
                         .event_format(format().compact())
@@ -138,7 +140,7 @@ pub fn init_tracer(
         } else {
             tracing_subscriber::registry()
                 .with(EnvFilter::new(&log_config.filter))
-                .with(tracing_opentelemetry::layer().with_tracer(agent))
+                .with(OpenTelemetryLayer::new(agent))
                 .with(
                     tracing_subscriber::fmt::layer()
                         .event_format(format().compact())

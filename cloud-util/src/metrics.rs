@@ -1,15 +1,13 @@
-use hyper::{
-    header::CONTENT_TYPE,
-    service::{make_service_fn, service_fn},
-    Body, Method, Request, Response, Server,
-};
+use axum::routing::get;
+use axum::{http::StatusCode, response::IntoResponse, Router};
+use hyper::{Request, Response};
 use lazy_static::lazy_static;
 use prometheus::{
     exponential_buckets, gather, register_counter, register_gauge, register_histogram, Counter,
     Encoder, Gauge, Histogram, TextEncoder,
 };
+use std::collections::HashMap;
 use std::time::Instant;
-use std::{collections::HashMap, convert::Infallible};
 use std::{
     sync::{Arc, RwLock},
     task::{Context, Poll},
@@ -202,9 +200,9 @@ pub struct RpcMetricsService<S> {
     buckets: Vec<f64>,
 }
 
-impl<S> Service<Request<Body>> for RpcMetricsService<S>
+impl<S> Service<Request<BoxBody>> for RpcMetricsService<S>
 where
-    S: Service<Request<Body>, Response = Response<BoxBody>> + Clone + Send + 'static,
+    S: Service<Request<BoxBody>, Response = Response<BoxBody>> + Clone + Send + 'static,
     S::Future: Send + 'static,
 {
     type Response = S::Response;
@@ -215,7 +213,7 @@ where
         self.inner.poll_ready(cx)
     }
 
-    fn call(&mut self, req: Request<Body>) -> Self::Future {
+    fn call(&mut self, req: Request<BoxBody>) -> Self::Future {
         let clone = self.inner.clone();
         let mut inner = std::mem::replace(&mut self.inner, clone);
 
@@ -256,47 +254,21 @@ where
 pub async fn run_metrics_exporter(
     port: u16,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-    let make_svc =
-        make_service_fn(move |_conn| async move { Ok::<_, Infallible>(service_fn(serve_req)) });
-
-    let addr = ([0, 0, 0, 0], port).into();
-    let server = Server::bind(&addr).serve(make_svc);
-    info!("exporting metrics to http://{}/metrics", addr);
-
-    server.await?;
+    let app = Router::new().route("/metrics", get(exporter));
+    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
+        .await
+        .unwrap();
+    axum::serve(listener, app).await?;
+    info!("exporting metrics to http://127.0.0.1:{}/metrics", port);
 
     Ok(())
 }
 
-async fn serve_req(req: Request<Body>) -> Result<Response<Body>, hyper::Error> {
-    let response = match (req.method(), req.uri().path()) {
-        (&Method::GET, "/metrics") => {
-            let mut buffer = vec![];
-            let encoder = TextEncoder::new();
-            let metric_families = gather();
-            let _ = encoder.encode(&metric_families, &mut buffer);
+async fn exporter() -> impl IntoResponse {
+    let mut buffer = vec![];
+    let encoder = TextEncoder::new();
+    let metric_families = gather();
+    let _ = encoder.encode(&metric_families, &mut buffer);
 
-            Response::builder()
-                .status(200)
-                .header(CONTENT_TYPE, encoder.format_type())
-                .body(Body::from(buffer))
-                .unwrap()
-        }
-        _ => Response::builder()
-            .status(404)
-            .body(Body::from(
-                "
-            default:\n
-            /60000/metrics for network\n
-            /60001/metrics for consensus\n
-            /60002/metrics for executor\n
-            /60003/metrics for storage\n
-            /60004/metrics for controller\n
-            /60005/metrics for crypto\n
-            ",
-            ))
-            .unwrap(),
-    };
-
-    Ok(response)
+    (StatusCode::OK, String::from_utf8(buffer).unwrap())
 }

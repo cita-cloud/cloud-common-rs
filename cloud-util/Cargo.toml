@@ -1,7 +1,10 @@
 [package]
 name = "cloud-util"
 version = "0.8.1"
-authors = ["ypf <yuitta@163.com>", "Rivtower Technologies <contact@rivtower.com>"]
+authors = [
+    "ypf <yuitta@163.com>",
+    "Rivtower Technologies <contact@rivtower.com>",
+]
 edition = "2021"
 license = "Apache-2.0"
 description = "cita-cloud utility library"
@@ -9,23 +12,35 @@ description = "cita-cloud utility library"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-prost = "0.12"
-tokio = { version = "1.36", default-features = false, features = ["fs", "rt-multi-thread"] }
+anyhow = "1.0"
+axum = "0.7"
+prost = "0.13"
+tokio = { version = "1.38", default-features = false, features = [
+    "fs",
+    "rt-multi-thread",
+] }
 toml = "0.8"
-tonic = "0.11"
+tonic = "0.12"
 tower = "0.4"
 futures = "0.3"
-hyper = { version = "0.14", features = ["full"] }
-prometheus = "0.13"
-lazy_static = "1.4"
+hyper = { version = "1.4", features = ["full"] }
+prometheus = "0.13.4"
+lazy_static = "1.5"
+reqwest = "0.11" # for opentelemetry-http
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "local-time"] }
-tracing-opentelemetry = "0.22"
+tracing-subscriber = { version = "0.3", features = [
+    "env-filter",
+    "local-time",
+] }
+tracing-opentelemetry = "0.24"
 tracing-appender = "0.2"
-opentelemetry = { version = "0.21" }
-opentelemetry-jaeger = { version = "0.20", features = ["rt-tokio"] }
-opentelemetry-http = { version = "0.10", features = ["hyper", "tokio"] }
-opentelemetry_sdk = { version = "0.21", features = ["jaeger_remote_sampler"] }
+opentelemetry = { version = "0.23" }
+opentelemetry-otlp = { version = "0.16", features = ["tokio"] }
+opentelemetry-http = { version = "0.12", features = ["reqwest", "tokio"] }
+opentelemetry_sdk = { version = "0.23", features = [
+    "jaeger_remote_sampler",
+    "rt-tokio",
+] }
 serde = { version = "1.0", features = ["derive"] }
 time = "0.3"
 chrono = "0.4"
