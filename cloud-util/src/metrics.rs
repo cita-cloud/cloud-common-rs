@@ -257,11 +257,11 @@ pub async fn run_metrics_exporter(
     let app = Router::new()
         .route("/metrics", get(exporter))
         .fallback(handler_404);
-    let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", port))
+    let listener = tokio::net::TcpListener::bind(format!("[::]:{}", port))
         .await
         .unwrap();
     axum::serve(listener, app).await?;
-    info!("exporting metrics to http://0.0.0.0:{}/metrics", port);
+    info!("exporting metrics to http://[::]:{}/metrics", port);
 
     Ok(())
 }
