@@ -203,7 +203,7 @@ impl RPCClientTrait for RetryClient<RpcServiceClient<InterceptedSvc>> {
         &self,
         flag: controller::Flag,
     ) -> Result<controller::BlockNumber, tonic::Status> {
-        retry_call!(self, get_block_number, flag.clone())
+        retry_call!(self, get_block_number, flag)
     }
 
     async fn send_raw_transaction(
@@ -238,28 +238,28 @@ impl RPCClientTrait for RetryClient<RpcServiceClient<InterceptedSvc>> {
         &self,
         n: controller::BlockNumber,
     ) -> Result<blockchain::CompactBlock, tonic::Status> {
-        retry_call!(self, get_block_by_number, n.clone())
+        retry_call!(self, get_block_by_number, n)
     }
 
     async fn get_state_root_by_number(
         &self,
         n: controller::BlockNumber,
     ) -> Result<common::StateRoot, tonic::Status> {
-        retry_call!(self, get_state_root_by_number, n.clone())
+        retry_call!(self, get_state_root_by_number, n)
     }
 
     async fn get_proof_by_number(
         &self,
         n: controller::BlockNumber,
     ) -> Result<common::Proof, tonic::Status> {
-        retry_call!(self, get_proof_by_number, n.clone())
+        retry_call!(self, get_proof_by_number, n)
     }
 
     async fn get_block_detail_by_number(
         &self,
         n: controller::BlockNumber,
     ) -> Result<blockchain::Block, tonic::Status> {
-        retry_call!(self, get_block_detail_by_number, n.clone())
+        retry_call!(self, get_block_detail_by_number, n)
     }
 
     async fn get_transaction(
@@ -273,21 +273,21 @@ impl RPCClientTrait for RetryClient<RpcServiceClient<InterceptedSvc>> {
         &self,
         e: common::Empty,
     ) -> Result<controller::SystemConfig, tonic::Status> {
-        retry_call!(self, get_system_config, e.clone())
+        retry_call!(self, get_system_config, e)
     }
 
     async fn get_system_config_by_number(
         &self,
         n: controller::BlockNumber,
     ) -> Result<controller::SystemConfig, tonic::Status> {
-        retry_call!(self, get_system_config_by_number, n.clone())
+        retry_call!(self, get_system_config_by_number, n)
     }
 
     async fn get_block_hash(
         &self,
         n: controller::BlockNumber,
     ) -> Result<common::Hash, tonic::Status> {
-        retry_call!(self, get_block_hash, n.clone())
+        retry_call!(self, get_block_hash, n)
     }
 
     async fn get_transaction_block_number(
@@ -312,7 +312,7 @@ impl RPCClientTrait for RetryClient<RpcServiceClient<InterceptedSvc>> {
     }
 
     async fn get_node_status(&self, e: common::Empty) -> Result<common::NodeStatus, tonic::Status> {
-        retry_call!(self, get_node_status, e.clone())
+        retry_call!(self, get_node_status, e)
     }
 
     async fn get_cross_chain_proof(
@@ -379,7 +379,7 @@ impl ControllerClientTrait for RetryClient<Consensus2ControllerServiceClient<Int
         &self,
         e: common::Empty,
     ) -> Result<common::ProposalResponse, tonic::Status> {
-        retry_call!(self, get_proposal, e.clone())
+        retry_call!(self, get_proposal, e)
     }
 
     async fn check_proposal(
@@ -417,7 +417,7 @@ impl NetworkClientTrait for RetryClient<NetworkServiceClient<InterceptedSvc>> {
         &self,
         e: common::Empty,
     ) -> Result<network::NetworkStatusResponse, tonic::Status> {
-        retry_call!(self, get_network_status, e.clone())
+        retry_call!(self, get_network_status, e)
     }
 
     async fn register_network_msg_handler(
@@ -438,7 +438,7 @@ impl NetworkClientTrait for RetryClient<NetworkServiceClient<InterceptedSvc>> {
         &self,
         e: common::Empty,
     ) -> Result<common::TotalNodeNetInfo, tonic::Status> {
-        retry_call!(self, get_peers_net_info, e.clone())
+        retry_call!(self, get_peers_net_info, e)
     }
 }
 
@@ -477,7 +477,7 @@ impl CryptoClientTrait for RetryClient<CryptoServiceClient<InterceptedSvc>> {
         &self,
         e: common::Empty,
     ) -> Result<crypto::GetCryptoInfoResponse, tonic::Status> {
-        retry_call!(self, get_crypto_info, e.clone())
+        retry_call!(self, get_crypto_info, e)
     }
 
     async fn hash_data(
