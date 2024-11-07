@@ -16,27 +16,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     #[cfg(feature = "tonic-build")]
     {
         println!("cargo:rerun-if-changed=protos");
-        tonic_build::configure().out_dir("src/proto").compile(
-            &[
-                "blockchain.proto",
-                "common.proto",
-                "consensus.proto",
-                "network.proto",
-                "storage.proto",
-                "crypto.proto",
-                "health_check.proto",
-                "status_code.proto",
-            ],
-            &["protos/protos"],
-        )?;
+        tonic_build::configure()
+            .out_dir("src/proto")
+            .compile_protos(
+                &[
+                    "blockchain.proto",
+                    "common.proto",
+                    "consensus.proto",
+                    "network.proto",
+                    "storage.proto",
+                    "crypto.proto",
+                    "health_check.proto",
+                    "status_code.proto",
+                ],
+                &["protos/protos"],
+            )?;
         tonic_build::configure()
             .out_dir("src/proto")
             .file_descriptor_set_path("src/reflect/controller.bin")
-            .compile(&["controller.proto"], &["protos/protos"])?;
+            .compile_protos(&["controller.proto"], &["protos/protos"])?;
         tonic_build::configure()
             .out_dir("src/proto")
             .file_descriptor_set_path("src/reflect/executor.bin")
-            .compile(&["executor.proto", "vm/evm.proto"], &["protos/protos"])?;
+            .compile_protos(&["executor.proto", "vm/evm.proto"], &["protos/protos"])?;
     }
     Ok(())
 }

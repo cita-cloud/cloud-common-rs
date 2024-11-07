@@ -13,7 +13,7 @@
 // limitations under the License.
 
 use chrono::{Local, Offset};
-use opentelemetry::{global, propagation::Extractor, KeyValue};
+use opentelemetry::{global, propagation::Extractor, trace::TracerProvider, KeyValue};
 use opentelemetry_sdk::{
     propagation::TraceContextPropagator,
     runtime,
@@ -97,7 +97,8 @@ pub fn init_tracer(
                 )
                 .with_batch_config(BatchConfig::default())
                 .with_exporter(opentelemetry_otlp::new_exporter().tonic())
-                .install_batch(runtime::Tokio)?,
+                .install_batch(runtime::Tokio)?
+                .tracer("cita_cloud_tracer"),
         );
     }
 

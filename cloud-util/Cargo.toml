@@ -15,29 +15,29 @@ description = "cita-cloud utility library"
 anyhow = "1.0"
 axum = "0.7"
 prost = "0.13"
-tokio = { version = "1.38", default-features = false, features = [
+tokio = { version = "1.41", default-features = false, features = [
     "fs",
     "rt-multi-thread",
 ] }
 toml = "0.8"
 tonic = "0.12"
-tower = "0.4"
+tower = "0.5"
 futures = "0.3"
-hyper = { version = "1.4", features = ["full"] }
-prometheus = "0.13.4"
+hyper = { version = "1.5", features = ["full"] }
+prometheus = "0.13"
 lazy_static = "1.5"
-reqwest = { version = "0.11", default-features = false } # for opentelemetry-http
+reqwest = { version = "0.12", default-features = false } # for opentelemetry-http
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = [
     "env-filter",
     "local-time",
 ] }
-tracing-opentelemetry = "0.24"
+tracing-opentelemetry = "0.27"
 tracing-appender = "0.2"
-opentelemetry = { version = "0.23" }
-opentelemetry-otlp = { version = "0.16", features = ["tokio"] }
-opentelemetry-http = { version = "0.12", features = ["reqwest", "tokio"] }
-opentelemetry_sdk = { version = "0.23", features = [
+opentelemetry = { version = "0.26" }
+opentelemetry-otlp = { version = "0.26", features = ["tokio"] }
+opentelemetry-http = { version = "0.26", features = ["reqwest"] }
+opentelemetry_sdk = { version = "0.26", features = [
     "jaeger_remote_sampler",
     "rt-tokio",
 ] }
