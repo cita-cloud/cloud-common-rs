@@ -1,6 +1,6 @@
 [package]
 name = "cloud-util"
-version = "0.8.2-beta1"
+version = "0.8.2"
 authors = [
     "ypf <yuitta@163.com>",
     "Rivtower Technologies <contact@rivtower.com>",
@@ -47,7 +47,7 @@ chrono = "0.4"
 backtrace = "0.3"
 flume = "0.11"
 
-cita_cloud_proto = { path = "../cloud-proto", version = "=6.7.4-beta1" }
+cita_cloud_proto = { path = "../cloud-proto", version = "=6.7.4" }
 
 [target.'cfg(not(windows))'.dependencies]
 signal-hook = { version = "0.3" }
