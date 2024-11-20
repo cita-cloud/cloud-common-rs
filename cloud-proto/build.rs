@@ -18,6 +18,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("cargo:rerun-if-changed=protos");
         tonic_build::configure()
             .out_dir("src/proto")
+            .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .compile_protos(
                 &[
                     "blockchain.proto",
@@ -33,10 +34,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )?;
         tonic_build::configure()
             .out_dir("src/proto")
+            .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .file_descriptor_set_path("src/reflect/controller.bin")
             .compile_protos(&["controller.proto"], &["protos/protos"])?;
         tonic_build::configure()
             .out_dir("src/proto")
+            .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .file_descriptor_set_path("src/reflect/executor.bin")
             .compile_protos(&["executor.proto", "vm/evm.proto"], &["protos/protos"])?;
     }
