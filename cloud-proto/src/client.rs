@@ -29,8 +29,8 @@ use http::uri::InvalidUri;
 use opentelemetry::{global, propagation::Injector};
 use std::time::{Duration, Instant};
 use tonic::{
-    codegen::InterceptedService, metadata::MetadataValue, service::Interceptor, transport::Channel,
-    Request, Status,
+    Request, Status, codegen::InterceptedService, metadata::MetadataValue, service::Interceptor,
+    transport::Channel,
 };
 use tracing_opentelemetry::OpenTelemetrySpanExt;
 
@@ -414,7 +414,7 @@ pub trait ControllerClientTrait {
 #[async_trait::async_trait]
 pub trait NetworkClientTrait {
     async fn send_msg(&self, msg: network::NetworkMsg)
-        -> Result<common::StatusCode, tonic::Status>;
+    -> Result<common::StatusCode, tonic::Status>;
 
     async fn broadcast(
         &self,
@@ -520,10 +520,10 @@ struct MutMetadataMap<'a>(&'a mut tonic::metadata::MetadataMap);
 impl<'a> Injector for MutMetadataMap<'a> {
     /// Set a key and value in the MetadataMap.  Does nothing if the key or value are not valid inputs
     fn set(&mut self, key: &str, value: String) {
-        if let Ok(key) = tonic::metadata::MetadataKey::from_bytes(key.as_bytes()) {
-            if let Ok(val) = std::str::FromStr::from_str(&value) {
-                self.0.insert(key, val);
-            }
+        if let Ok(key) = tonic::metadata::MetadataKey::from_bytes(key.as_bytes())
+            && let Ok(val) = std::str::FromStr::from_str(&value)
+        {
+            self.0.insert(key, val);
         }
     }
 }

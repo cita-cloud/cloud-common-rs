@@ -1,11 +1,11 @@
 [package]
 name = "cloud-util"
-version = "0.8.2"
+version = "0.8.3"
 authors = [
     "ypf <yuitta@163.com>",
     "Rivtower Technologies <contact@rivtower.com>",
 ]
-edition = "2021"
+edition = "2024"
 license = "Apache-2.0"
 description = "cita-cloud utility library"
 
@@ -13,18 +13,18 @@ description = "cita-cloud utility library"
 
 [dependencies]
 anyhow = "1.0"
-axum = "0.7"
-prost = "0.13"
-tokio = { version = "1.41", default-features = false, features = [
+axum = "0.8"
+prost = "0.14"
+tokio = { version = "1.49", default-features = false, features = [
     "fs",
     "rt-multi-thread",
 ] }
-toml = "0.8"
-tonic = "0.12"
+toml = "1.0"
+tonic = "0.14"
 tower = "0.5"
 futures = "0.3"
-hyper = { version = "1.5", features = ["full"] }
-prometheus = "0.13"
+hyper = { version = "1.8", features = ["full"] }
+prometheus = "0.14"
 lazy_static = "1.5"
 reqwest = { version = "0.12", default-features = false } # for opentelemetry-http
 tracing = "0.1"
@@ -32,12 +32,12 @@ tracing-subscriber = { version = "0.3", features = [
     "env-filter",
     "local-time",
 ] }
-tracing-opentelemetry = "0.27"
+tracing-opentelemetry = "0.32"
 tracing-appender = "0.2"
-opentelemetry = { version = "0.26" }
-opentelemetry-otlp = { version = "0.26", features = ["tokio"] }
-opentelemetry-http = { version = "0.26", features = ["reqwest"] }
-opentelemetry_sdk = { version = "0.26", features = [
+opentelemetry = { version = "0.31" }
+opentelemetry-otlp = { version = "0.31", features = ["tokio", "grpc-tonic"] }
+opentelemetry-http = { version = "0.31", features = ["reqwest"] }
+opentelemetry_sdk = { version = "0.31", features = [
     "jaeger_remote_sampler",
     "rt-tokio",
 ] }
@@ -45,9 +45,11 @@ serde = { version = "1.0", features = ["derive"] }
 time = "0.3"
 chrono = "0.4"
 backtrace = "0.3"
-flume = "0.11"
+flume = "0.12"
+http-body-util = "0.1"
+bytes = "1.11"
 
-cita_cloud_proto = { path = "../cloud-proto", version = "=6.7.4" }
+cita_cloud_proto = { path = "../cloud-proto", version = "=6.7.5" }
 
 [target.'cfg(not(windows))'.dependencies]
 signal-hook = { version = "0.3" }
@@ -57,4 +59,4 @@ signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
-criterion = "0.5"
+criterion = "0.8"

@@ -28,7 +28,7 @@ use crate::{
     network::network_service_client::NetworkServiceClient,
     storage::storage_service_client::StorageServiceClient,
 };
-use backoff::{backoff::Backoff, ExponentialBackoff};
+use backoff::{ExponentialBackoff, backoff::Backoff};
 use futures_retry::{ErrorHandler, FutureRetry, RetryPolicy};
 use std::{fmt::Debug, future::Future, time::Duration};
 use tonic::{Code, Status};

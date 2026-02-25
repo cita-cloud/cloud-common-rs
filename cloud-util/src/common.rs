@@ -18,9 +18,9 @@ use cita_cloud_proto::blockchain::{
 };
 use cita_cloud_proto::common::Address;
 use cita_cloud_proto::status_code::StatusCodeEnum;
+use serde::Deserialize;
 use std::fs;
 use std::path::Path;
-use toml::macros::Deserialize;
 use toml::Value;
 
 pub const ADDR_BYTES_LEN: usize = 20;
@@ -77,17 +77,16 @@ pub fn extract_compact(block: Block) -> CompactBlock {
     }
 }
 
-pub fn read_toml<'a, T: Deserialize<'a>>(path: impl AsRef<Path>, name: &'a str) -> T {
-    let s = fs::read_to_string(path)
-        .map_err(|e| println!("read_to_string err: {e}"))
-        .unwrap();
-    let config: Value = s
-        .parse()
-        .map_err(|e| println!("toml parse err: {e}"))
-        .unwrap();
-    T::deserialize(config[name].clone())
-        .map_err(|e| println!("config deserialize err: {e}"))
-        .unwrap()
+pub fn read_toml<T>(path: impl AsRef<Path>, name: &str) -> T
+where
+    T: for<'de> Deserialize<'de>,
+{
+    let s = fs::read_to_string(path).unwrap_or_else(|e| panic!("read_to_string err: {e}"));
+    let config: Value = toml::from_str(&s).unwrap_or_else(|e| panic!("toml parse err: {e}"));
+    let value = config
+        .get(name)
+        .unwrap_or_else(|| panic!("config get err: {name}"));
+    T::deserialize(value.clone()).unwrap_or_else(|e| panic!("config deserialize err: {e}"))
 }
 
 #[cfg(test)]
