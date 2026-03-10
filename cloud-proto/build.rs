@@ -13,10 +13,10 @@
 // limitations under the License.
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-changed=protos");
     #[cfg(feature = "tonic-build")]
     {
-        println!("cargo:rerun-if-changed=protos");
-        tonic_build::configure()
+        tonic_prost_build::configure()
             .out_dir("src/proto")
             .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .compile_protos(
@@ -32,12 +32,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ],
                 &["protos/protos"],
             )?;
-        tonic_build::configure()
+        tonic_prost_build::configure()
             .out_dir("src/proto")
             .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .file_descriptor_set_path("src/reflect/controller.bin")
             .compile_protos(&["controller.proto"], &["protos/protos"])?;
-        tonic_build::configure()
+        tonic_prost_build::configure()
             .out_dir("src/proto")
             .type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]")
             .file_descriptor_set_path("src/reflect/executor.bin")

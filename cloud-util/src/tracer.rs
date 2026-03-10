@@ -13,19 +13,20 @@
 // limitations under the License.
 
 use chrono::{Local, Offset};
-use opentelemetry::{global, propagation::Extractor, trace::TracerProvider, KeyValue};
+use opentelemetry::{KeyValue, global, propagation::Extractor, trace::TracerProvider};
+use opentelemetry_otlp::WithExportConfig;
 use opentelemetry_sdk::{
+    Resource,
     propagation::TraceContextPropagator,
     runtime,
-    trace::{BatchConfig, Sampler},
-    Resource,
+    trace::{Sampler, SdkTracerProvider},
 };
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-use time::{format_description::well_known, UtcOffset};
+use time::{UtcOffset, format_description::well_known};
 use tonic::Request;
 use tracing_opentelemetry::{OpenTelemetryLayer, OpenTelemetrySpanExt};
-use tracing_subscriber::{fmt::format, fmt::time::OffsetTime, prelude::*, EnvFilter};
+use tracing_subscriber::{EnvFilter, fmt::format, fmt::time::OffsetTime, prelude::*};
 
 struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
 
@@ -77,29 +78,34 @@ pub fn init_tracer(
     let mut agent = None;
     if let Some(agent_endpoint) = &log_config.agent_endpoint {
         global::set_text_map_propagator(TraceContextPropagator::new());
-        agent = Some(
-            opentelemetry_otlp::new_pipeline()
-                .tracing()
-                .with_trace_config(
-                    opentelemetry_sdk::trace::Config::default()
-                        .with_sampler(
-                            Sampler::jaeger_remote(
-                                runtime::Tokio,
-                                reqwest::Client::new(),
-                                Sampler::AlwaysOff,
-                                &log_config.service_name,
-                            )
-                            .with_endpoint(agent_endpoint)
-                            .build()
-                            .unwrap(),
-                        )
-                        .with_resource(Resource::new(vec![KeyValue::new("domain", domain)])),
+        let exporter = opentelemetry_otlp::SpanExporter::builder()
+            .with_tonic()
+            .with_endpoint(agent_endpoint)
+            .build()?;
+
+        let provider = SdkTracerProvider::builder()
+            .with_batch_exporter(exporter)
+            .with_sampler(
+                Sampler::jaeger_remote(
+                    runtime::Tokio,
+                    reqwest::Client::new(),
+                    Sampler::AlwaysOff,
+                    &log_config.service_name,
                 )
-                .with_batch_config(BatchConfig::default())
-                .with_exporter(opentelemetry_otlp::new_exporter().tonic())
-                .install_batch(runtime::Tokio)?
-                .tracer("cita_cloud_tracer"),
-        );
+                .with_endpoint(agent_endpoint)
+                .build()
+                .unwrap(),
+            )
+            .with_resource(
+                Resource::builder()
+                    .with_attributes(vec![KeyValue::new("domain", domain)])
+                    .build(),
+            )
+            .build();
+
+        let tracer = provider.tracer("cita_cloud_tracer");
+        global::set_tracer_provider(provider);
+        agent = Some(tracer);
     }
 
     // log
@@ -178,12 +184,8 @@ pub fn init_tracer(
     Ok(())
 }
 
-pub fn shutdown_tracer() {
-    opentelemetry::global::shutdown_tracer_provider();
-}
-
 pub fn set_parent<T>(request: &Request<T>) {
     let parent_cx =
         global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
-    tracing::Span::current().set_parent(parent_cx);
+    let _ = tracing::Span::current().set_parent(parent_cx);
 }

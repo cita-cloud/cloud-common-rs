@@ -13,8 +13,8 @@
 // limitations under the License.
 
 use cita_cloud_proto::client::{InterceptedSvc, NetworkClientTrait};
-use cita_cloud_proto::network::network_service_client::NetworkServiceClient;
 use cita_cloud_proto::network::RegisterInfo;
+use cita_cloud_proto::network::network_service_client::NetworkServiceClient;
 use cita_cloud_proto::retry::RetryClient;
 use cita_cloud_proto::status_code::StatusCodeEnum;
 

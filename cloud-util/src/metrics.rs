@@ -1,10 +1,10 @@
 use axum::routing::get;
-use axum::{http::StatusCode, response::IntoResponse, Router};
-use hyper::{Request, Response};
+use axum::{Router, http::StatusCode, response::IntoResponse};
+use hyper::Request;
 use lazy_static::lazy_static;
 use prometheus::{
-    exponential_buckets, gather, register_counter, register_gauge, register_histogram, Counter,
-    Encoder, Gauge, Histogram, TextEncoder,
+    Counter, Encoder, Gauge, Histogram, TextEncoder, exponential_buckets, gather, register_counter,
+    register_gauge, register_histogram,
 };
 use std::collections::HashMap;
 use std::time::Instant;
@@ -12,7 +12,6 @@ use std::{
     sync::{Arc, RwLock},
     task::{Context, Poll},
 };
-use tonic::body::BoxBody;
 use tower::{Layer, Service};
 
 lazy_static! {
@@ -200,10 +199,11 @@ pub struct RpcMetricsService<S> {
     buckets: Vec<f64>,
 }
 
-impl<S> Service<Request<BoxBody>> for RpcMetricsService<S>
+impl<S, ReqBody> Service<Request<ReqBody>> for RpcMetricsService<S>
 where
-    S: Service<Request<BoxBody>, Response = Response<BoxBody>> + Clone + Send + 'static,
+    S: Service<Request<ReqBody>> + Clone + Send + 'static,
     S::Future: Send + 'static,
+    ReqBody: Send + 'static,
 {
     type Response = S::Response;
     type Error = S::Error;
@@ -213,7 +213,7 @@ where
         self.inner.poll_ready(cx)
     }
 
-    fn call(&mut self, req: Request<BoxBody>) -> Self::Future {
+    fn call(&mut self, req: Request<ReqBody>) -> Self::Future {
         let clone = self.inner.clone();
         let mut inner = std::mem::replace(&mut self.inner, clone);
 
@@ -221,7 +221,7 @@ where
         let client_name = req
             .headers()
             .get("client-name")
-            .map(|v| v.to_str().unwrap());
+            .map(|v: &axum::http::HeaderValue| v.to_str().unwrap());
         let uri_string = req.uri().to_string();
         let method_name = uri_string.rsplit_once('/').map(|c| c.1);
 

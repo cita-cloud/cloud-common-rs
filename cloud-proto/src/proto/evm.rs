@@ -24,7 +24,7 @@ pub struct Receipt {
     #[prost(string, tag = "11")]
     pub error_message: ::prost::alloc::string::String,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Log {
     #[prost(bytes = "vec", tag = "1")]
     pub address: ::prost::alloc::vec::Vec<u8>,
@@ -45,32 +45,32 @@ pub struct Log {
     #[prost(uint64, tag = "9")]
     pub transaction_log_index: u64,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ByteCode {
     #[prost(bytes = "vec", tag = "1")]
     pub byte_code: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Balance {
     #[prost(bytes = "vec", tag = "1")]
     pub value: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct Nonce {
     #[prost(bytes = "vec", tag = "1")]
     pub nonce: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ByteAbi {
     #[prost(bytes = "vec", tag = "1")]
     pub bytes_abi: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ByteQuota {
     #[prost(bytes = "vec", tag = "1")]
     pub bytes_quota: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct ReceiptProof {
     #[prost(bytes = "vec", tag = "1")]
     pub receipt: ::prost::alloc::vec::Vec<u8>,
@@ -79,7 +79,7 @@ pub struct ReceiptProof {
     #[prost(message, optional, tag = "3")]
     pub roots_info: ::core::option::Option<RootsInfo>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RootsInfo {
     #[prost(uint64, tag = "1")]
     pub height: u64,
@@ -88,14 +88,14 @@ pub struct RootsInfo {
     #[prost(bytes = "vec", tag = "3")]
     pub receipt_root: ::prost::alloc::vec::Vec<u8>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct BlockNumber {
     #[prost(oneof = "block_number::Lable", tags = "1, 2, 3")]
     pub lable: ::core::option::Option<block_number::Lable>,
 }
 /// Nested message and enum types in `BlockNumber`.
 pub mod block_number {
-    #[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Oneof)]
+    #[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Oneof)]
     pub enum Lable {
         #[prost(uint64, tag = "1")]
         Height(u64),
@@ -105,35 +105,35 @@ pub mod block_number {
         Hash(::prost::alloc::vec::Vec<u8>),
     }
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetCodeRequest {
     #[prost(message, optional, tag = "1")]
     pub address: ::core::option::Option<super::common::Address>,
     #[prost(message, optional, tag = "2")]
     pub block_number: ::core::option::Option<BlockNumber>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetBalanceRequest {
     #[prost(message, optional, tag = "1")]
     pub address: ::core::option::Option<super::common::Address>,
     #[prost(message, optional, tag = "2")]
     pub block_number: ::core::option::Option<BlockNumber>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetTransactionCountRequest {
     #[prost(message, optional, tag = "1")]
     pub address: ::core::option::Option<super::common::Address>,
     #[prost(message, optional, tag = "2")]
     pub block_number: ::core::option::Option<BlockNumber>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetAbiRequest {
     #[prost(message, optional, tag = "1")]
     pub address: ::core::option::Option<super::common::Address>,
     #[prost(message, optional, tag = "2")]
     pub block_number: ::core::option::Option<BlockNumber>,
 }
-#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, ::prost::Message)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct GetStorageAtRequest {
     #[prost(message, optional, tag = "1")]
     pub address: ::core::option::Option<super::common::Address>,
@@ -170,7 +170,7 @@ pub mod rpc_service_client {
     }
     impl<T> RpcServiceClient<T>
     where
-        T: tonic::client::GrpcService<tonic::body::BoxBody>,
+        T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
         T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
         <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
@@ -191,12 +191,12 @@ pub mod rpc_service_client {
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
             T: tonic::codegen::Service<
-                http::Request<tonic::body::BoxBody>,
-                Response = http::Response<
-                    <T as tonic::client::GrpcService<tonic::body::BoxBody>>::ResponseBody,
+                    http::Request<tonic::body::Body>,
+                    Response = http::Response<
+                        <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
+                    >,
                 >,
-            >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::BoxBody>>>::Error:
+            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
                 Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             RpcServiceClient::new(InterceptedService::new(inner, interceptor))
@@ -239,7 +239,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path =
                 http::uri::PathAndQuery::from_static("/evm.RPCService/GetTransactionReceipt");
             let mut req = request.into_request();
@@ -254,7 +254,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetCode");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -268,7 +268,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetBalance");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -282,7 +282,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetTransactionCount");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -296,7 +296,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetAbi");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -310,7 +310,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/EstimateQuota");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -324,7 +324,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetReceiptProof");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -338,7 +338,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetRootsInfo");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -353,7 +353,7 @@ pub mod rpc_service_client {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
-            let codec = tonic::codec::ProstCodec::default();
+            let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/evm.RPCService/GetStorageAt");
             let mut req = request.into_request();
             req.extensions_mut()
@@ -474,7 +474,7 @@ pub mod rpc_service_server {
         B: Body + std::marker::Send + 'static,
         B::Error: Into<StdError> + std::marker::Send + 'static,
     {
-        type Response = http::Response<tonic::body::BoxBody>;
+        type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
         fn poll_ready(
@@ -511,7 +511,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetTransactionReceiptSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -549,7 +549,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetCodeSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -588,7 +588,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetBalanceSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -630,7 +630,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetTransactionCountSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -668,7 +668,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetAbiSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -710,7 +710,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = EstimateQuotaSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -751,7 +751,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetReceiptProofSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -790,7 +790,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetRootsInfoSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -829,7 +829,7 @@ pub mod rpc_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetStorageAtSvc(inner);
-                        let codec = tonic::codec::ProstCodec::default();
+                        let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
                                 accept_compression_encodings,
@@ -845,7 +845,7 @@ pub mod rpc_service_server {
                     Box::pin(fut)
                 }
                 _ => Box::pin(async move {
-                    let mut response = http::Response::new(empty_body());
+                    let mut response = http::Response::new(tonic::body::Body::default());
                     let headers = response.headers_mut();
                     headers.insert(
                         tonic::Status::GRPC_STATUS,
