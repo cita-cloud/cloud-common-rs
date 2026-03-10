@@ -9,8 +9,6 @@ edition = "2024"
 license = "Apache-2.0"
 description = "cita-cloud utility library"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 anyhow = "1.0"
 axum = "0.8"
@@ -52,9 +50,8 @@ bytes = "1.11"
 cita_cloud_proto = { path = "../cloud-proto", version = "=6.7.5" }
 
 [target.'cfg(not(windows))'.dependencies]
-signal-hook = { version = "0.3" }
-signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
-
+signal-hook = { version = "0.4" }
+signal-hook-tokio = { version = "0.4", features = ["futures-v0_3"] }
 
 [dev-dependencies]
 serde = { version = "1.0", features = ["derive"] }
